@@ -39,4 +39,3 @@ if st.button("Transcribir ahora"):
                 st.write("Intenta con otro video o verifica que el link sea correcto.")
     else:
         st.warning("Por favor, introduce una URL válida.")
-```
