@@ -23,9 +23,9 @@ st.markdown("""
 
 st.title("ProTranscribe - Impulza Digital")
 
-# Sesión para guardar la transcripción
+# Sesión para guardar
 if 'transcripcion' not in st.session_state:
-    st.session_state.transcripcion = ""
+    st.session_state.transcripcion = None
 
 # PASO 1: Transcripción
 url_video = st.text_input("URL del video:")
@@ -46,26 +46,34 @@ if st.button("Paso 1: Transcribir Video"):
         except Exception as e:
             st.error(f"Error: {e}")
 
-# PASO 2: Reescritura Inteligente
+# PASO 2: Reescritura Estratégica
 if st.session_state.transcripcion:
     st.divider()
     st.subheader("Paso 2: Generar Guion Estratégico")
-    estilo = st.selectbox("Elige el objetivo del guion:", ["Autoridad (LinkedIn)", "Crecimiento (Instagram)", "Directo (TikTok)"])
+    estilo = st.selectbox("Elige el objetivo:", ["Autoridad (LinkedIn)", "Crecimiento (Instagram)", "Viral (Alto Impacto)"])
     
     if st.button("Generar Guion"):
         txt = st.session_state.transcripcion
         
-        if estilo == "Autoridad (LinkedIn)":
-            guion = f"El error más común al intentar {txt[:30]} es ignorar la estrategia base.\n\nTras analizar este contenido, he detectado tres puntos clave:\n1. {txt[30:150]}\n2. {txt[150:250]}\n3. {txt[250:350]}\n\nLa conclusión es clara: si quieres resultados, necesitas profesionalizar tu proceso.\n\n¿Qué opinas sobre este enfoque?"
+        if estilo == "Viral (Alto Impacto)":
+            guion = f"El mercado te ha estado mintiendo sobre {txt[:30]}.\n\nOlvídate de lo que siempre escuchas. La realidad es que:\n{txt[30:200]}...\n\nSi quieres resultados distintos, deja de hacer lo mismo de siempre.\n\nEl sistema es este:\n1. {txt[200:300]}\n2. {txt[300:400]}\n\nImpulza tu marca. Comenta 'GUION' si quieres que te explique cómo escalar esto a otro nivel."
+            hashtags = "#ImpulzaDigital #Estrategia #AltoImpacto #IA"
+            
+        elif estilo == "Autoridad (LinkedIn)":
+            guion = f"El error más común al intentar {txt[:30]} es ignorar la estrategia base.\n\nHe analizado el proceso y detectado puntos clave:\n{txt[30:300]}...\n\nLa conclusión es clara: necesitas profesionalizar tu proceso.\n\n¿Qué opinas sobre este enfoque?"
             hashtags = "#Estrategia #ImpulzaDigital #Negocios #Autoridad"
             
-        elif estilo == "Crecimiento (Instagram)":
-            guion = f"La estrategia exacta para dominar {txt[:30]} 🚀\n\nNo busques atajos, busca sistemas. Esto es lo que realmente marca la diferencia:\n{txt[:300]}...\n\nSi te ha aportado valor, guárdate este post para aplicarlo hoy mismo.\n\n#ImpulzaDigital #Crecimiento"
+        else: # Crecimiento (Instagram)
+            guion = f"La estrategia exacta para dominar {txt[:30]} 🚀\n\nNo busques atajos, busca sistemas. Esto es lo que realmente marca la diferencia:\n{txt[:300]}...\n\nGuarda este post si quieres aplicarlo hoy mismo."
             hashtags = "#ImpulzaDigital #Branding #CrecimientoDigital #IA"
-            
-        else: # Estilo Directo (TikTok)
-            guion = f"3 pasos para mejorar en {txt[:30]}.\n\nOlvídate de la teoría, vamos a la práctica:\n1. Optimiza: {txt[:100]}\n2. Ejecuta: {txt[100:200]}\n3. Escala: {txt[200:300]}\n\nGuarda este video y ponlo en práctica. Impulza tu marca ya."
-            hashtags = "#ImpulzaDigital #TipsIA #Productividad #ContenidoViral"
         
         st.text_area("Tu nuevo guion profesional:", guion, height=300)
-        st.markdown(f"**Hashtags recomendados:** {hashtags}")
+        st.markdown(f"**Hashtags:** {hashtags}")
+```
+
+### Por qué esta estructura "Viral" funciona:
+*   **"El mercado te ha estado mintiendo":** Esto es un *Pattern Interrupt*. La gente se detiene porque siente curiosidad o indignación positiva.
+*   **"Olvídate de lo que siempre escuchas":** Esto te posiciona instantáneamente como la persona que tiene la verdad, no alguien que repite lo mismo que todos.
+*   **Sistema Paso a Paso:** Los videos virales de alto impacto siempre enumeran los pasos. El cerebro humano ama las listas porque parecen "fáciles de seguir".
+
+¿Qué tal se siente este cambio de tono? Ya no es Clickbait, es **Contenido de Autoridad**. Haz el *Commit* y el *Reboot* y cuéntame qué te parece.
