@@ -85,4 +85,3 @@ if st.button("Transcribir ahora"):
                 st.write("YouTube/TikTok puede bloquear el acceso a servidores. Si el error persiste, intenta con otro enlace.")
     else:
         st.warning("Por favor, introduce una URL válida.")
-```
