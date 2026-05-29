@@ -2,8 +2,10 @@ import streamlit as st
 import yt_dlp
 import whisper
 import os
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
-# Configuración de página con diseño Impulza Digital
+# Configuración de página
 st.set_page_config(page_title="ProTranscribe por Impulza Digital", layout="wide")
 
 st.markdown("""
@@ -30,30 +32,48 @@ st.markdown("""
 
 st.title("ProTranscribe por Impulza Digital")
 
-def procesar_audio(archivo):
-    model = whisper.load_model("base")
-    resultado = model.transcribe(archivo)
-    return resultado["text"]
+# Lógica Google Sheets
+def guardar_lead(nombre, email):
+    scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets']
+    creds_dict = st.secrets["gcp_service_account"]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    sheet = client.open("Leads_ProTranscribe").sheet1
+    sheet.append_row([nombre, email])
 
-tab1, tab2 = st.tabs(["📥 Descargar desde URL", "📁 Subir archivo (Plan B)"])
+tab1, tab2, tab3 = st.tabs(["🚀 Transcripción", "📩 Registro VIP", "📁 Subir archivo"])
 
 with tab1:
     url_video = st.text_input("URL del video:")
     if st.button("Transcribir ahora"):
         if url_video:
-            with st.spinner("Procesando video... Esto puede tardar según la duración."):
+            with st.spinner("Procesando..."):
                 try:
-                    # Configuración funcional de yt-dlp
-                    ydl_opts = {
-                        'format': 'bestaudio/best', 
-                        'outtmpl': 'temp_audio.%(ext)s',
-                        'quiet': True,
-                        'no_warnings': True,
-                        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-                        'nocheckcertificate': True,
-                        'ignoreerrors': False,
-                    }
-                    
+                    ydl_opts = {'format': 'bestaudio/best', 'outtmpl': 'temp_audio.%(ext)s', 'quiet': True}
                     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                         info = ydl.extract_info(url_video, download=True)
                         filename = ydl.prepare_filename(info)
+                    model = whisper.load_model("base")
+                    res = model.transcribe(filename)
+                    st.text_area("Resultado:", res["text"], height=300)
+                    if os.path.exists(filename): os.remove(filename)
+                except Exception as e:
+                    st.error(f"Error: {e}")
+        else:
+            st.warning("Introduce una URL.")
+
+with tab2:
+    nombre = st.text_input("Tu Nombre:")
+    email = st.text_input("Tu Correo:")
+    if st.button("Guardar en Lista VIP"):
+        guardar_lead(nombre, email)
+        st.success("¡Registrado!")
+
+with tab3:
+    archivo = st.file_uploader("Si la URL falla, sube el archivo:", type=['mp3', 'mp4', 'wav'])
+    if archivo:
+        with open("upload.mp3", "wb") as f: f.write(archivo.getbuffer())
+        model = whisper.load_model("base")
+        st.text_area("Resultado:", model.transcribe("upload.mp3")["text"], height=300)
+        os.remove("upload.mp3")
+```
