@@ -8,53 +8,57 @@ st.set_page_config(page_title="ProTranscribe - Impulza Digital", layout="wide")
 st.markdown("""
     <style>
     .stApp { background-color: #0d0d0d; color: #ffffff; }
-    h1 { color: #FFCC00 !important; font-weight: 800; }
+    h1 { color: #FFCC00 !important; font-weight: 800; text-transform: uppercase; }
     .stButton>button { background-color: #FFCC00 !important; color: #000000 !important; font-weight: 800 !important; }
     </style>
 """, unsafe_allow_html=True)
 
 st.title("ProTranscribe - Impulza Digital")
 
-# Sesión para guardar la transcripción
 if 'transcripcion' not in st.session_state:
     st.session_state.transcripcion = None
 
 url_video = st.text_input("URL del video:")
 
-# PASO 1: Transcripción
-if st.button("Paso 1: Transcribir Video"):
+# PASO 1: Transcripción Literal
+if st.button("Paso 1: Obtener Transcripción Literal"):
     if url_video:
-        with st.spinner("Descargando y transcribiendo..."):
+        with st.spinner("Procesando..."):
             try:
                 ydl_opts = {'format': 'bestaudio/best', 'outtmpl': '/tmp/temp_audio', 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': '192'}]}
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([url_video])
-                
                 resultado = whisper.load_model("base").transcribe("/tmp/temp_audio.mp3")
                 st.session_state.transcripcion = resultado["text"]
-                st.success("¡Transcripción obtenida con éxito!")
+                st.success("¡Transcripción literal obtenida!")
             except Exception as e:
                 st.error(f"Error: {e}")
-    else:
-        st.warning("Introduce una URL.")
 
-# PASO 2: Guion SEO (Solo aparece si ya hay una transcripción)
+# PASO 2: Visualización y Reescritura Estratégica
 if st.session_state.transcripcion:
     st.divider()
-    st.subheader("Paso 2: Generar Guion SEO")
-    plataforma = st.selectbox("Selecciona la plataforma:", ["TikTok", "Instagram", "YouTube Shorts", "LinkedIn"])
+    st.subheader("Paso 2: Material Bruto")
+    st.text_area("Transcripción literal:", st.session_state.transcripcion, height=200)
     
-    if st.button("Generar Guion Optimizado"):
-        texto = st.session_state.transcripcion
-        st.markdown(f"### Estrategia para {plataforma}")
-        
-        # Lógica de ejemplo según plataforma
-        if plataforma == "TikTok":
-            estructura = f"Gancho: ¡Deja de hacer esto si quieres crecer!\n\nContenido: {texto[:400]}...\n\nCTA: Sígueme para más."
-            tags = "#ImpulzaDigital #Viral #IA"
-        else:
-            estructura = f"Título: Aprende hoy sobre esto.\n\nContenido: {texto[:400]}...\n\nConclusión: Visita el link."
-            tags = "#ImpulzaDigital #Marketing #Estrategia"
+    st.divider()
+    st.subheader("Paso 3: Reescritura Estratégica SEO")
+    plataforma = st.selectbox("¿En qué red social lo vas a publicar?", ["TikTok", "Instagram", "LinkedIn"])
+    
+    if st.button("Generar Nuevo Guion SEO"):
+        with st.spinner("Creando guion estratégico..."):
+            texto = st.session_state.transcripcion
             
-        st.text_area("Resultado:", estructura, height=250)
-        st.markdown(f"**Hashtags:** {tags}")
+            # Lógica SEO por plataforma (Palabras Clave + Estructura)
+            if plataforma == "TikTok":
+                guion = f"GANCHO (3s): ¿Sabías que {texto[:50]}...? ¡Hoy te enseño a solucionarlo!\n\nCONTENIDO: {texto[:300]}...\n\nCTA: Comenta 'IA' para más info.\n\nPALABRAS CLAVE: viral, trucos, automatización, {plataforma.lower()}, tips."
+                hashtags = "#ImpulzaDigital #TikTokViral #IA #ContenidoInteligente #Tips"
+            elif plataforma == "Instagram":
+                guion = f"TÍTULO: La verdad sobre {plataforma.lower()}.\n\nCUERPO: Analizando la idea de: {texto[:300]}...\n\nCONCLUSIÓN: Guarda este post para después.\n\nPALABRAS CLAVE: estrategia, marca personal, branding, crecimiento, {plataforma.lower()}."
+                hashtags = "#ImpulzaDigital #InstagramSEO #MarcaPersonal #Growth #DigitalMarketing"
+            else:
+                guion = f"TITULO PROFESIONAL: El futuro de {texto[:50]}.\n\nDESARROLLO: Basado en el concepto: {texto[:300]}...\n\nPALABRAS CLAVE: negocios, eficiencia, {plataforma.lower()}, tecnología."
+                hashtags = "#ImpulzaDigital #Business #InteligenciaArtificial #Tech #Productor"
+
+            st.markdown(f"### Nuevo Guion para {plataforma}")
+            st.text_area("Guion reescrito:", guion, height=300)
+            st.markdown(f"**Hashtags recomendados:** {hashtags}")
