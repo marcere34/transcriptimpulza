@@ -30,39 +30,46 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.title("ProTranscribe por Impulza Digital")
-st.write("Pega el enlace de un video y obtén la transcripción.")
 
 url_video = st.text_input("URL del video:")
 
 if st.button("Transcribir ahora"):
     if url_video:
-        with st.spinner("Procesando... Esto puede tomar un minuto."):
+        with st.spinner("Descargando y procesando..."):
             try:
-                # Opciones más robustas
+                # 1. Definimos un nombre de archivo fijo y forzamos MP3
+                filename = "audio_final.mp3"
+                if os.path.exists(filename):
+                    os.remove(filename)
+
+                # 2. Configuración robusta de yt-dlp
                 ydl_opts = {
-                    'format': 'bestaudio',
-                    'outtmpl': 'temp_audio.%(ext)s',
+                    'format': 'bestaudio/best',
+                    'postprocessors': [{
+                        'key': 'FFmpegExtractAudio',
+                        'preferredcodec': 'mp3',
+                        'preferredquality': '192',
+                    }],
+                    'outtmpl': 'audio_final', # Esto genera audio_final.mp3
                     'quiet': True,
                     'no_warnings': True,
-                    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
                 }
                 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    info = ydl.extract_info(url_video, download=True)
-                    filename = ydl.prepare_filename(info)
+                    ydl.download([url_video])
                 
-                # Carga y transcripción
+                # 3. Transcripción
                 model = whisper.load_model("base")
                 resultado = model.transcribe(filename)
                 
                 st.success("¡Transcripción lista!")
                 st.text_area("Resultado:", resultado["text"], height=300)
                 
+                # Limpieza
                 if os.path.exists(filename):
                     os.remove(filename)
                     
             except Exception as e:
                 st.error(f"Error técnico: {e}")
-                st.write("Si el error persiste, es posible que el sitio bloquee al servidor. Intenta con un video diferente.")
     else:
         st.warning("Por favor, introduce una URL válida.")
