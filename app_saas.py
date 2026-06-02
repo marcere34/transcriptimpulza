@@ -17,7 +17,7 @@ st.markdown("""
         border-radius: 10px !important; border: 2px solid #84139B !important; 
     }
     .stTextInput>div>div>input {
-        background-color: #ffffff !important; color: #ffffff !important; 
+        background-color: #1a1a1a !important; color: #ffffff !important; 
         border: 2px solid #84139B !important; border-radius: 10px !important;
     }
     </style>
@@ -25,17 +25,17 @@ st.markdown("""
 
 st.title("ProTranscribe - Impulza Digital")
 
-url_video = st.text_input("URL del video:")
+# AQUÍ ESTÁ EL CAMBIO: Etiqueta manual con tu color, el input sin etiqueta por defecto
+st.markdown('<p style="color:#FFCC00; font-weight:bold; font-size:16px;">URL DEL VIDEO:</p>', unsafe_allow_html=True)
+url_video = st.text_input("", label_visibility="hidden")
 
 if st.button("Transcribir ahora"):
     if url_video:
         with st.spinner("Descargando y procesando..."):
             try:
-                # 1. Limpieza absoluta
                 for f in glob.glob("/tmp/audio_*"):
                     os.remove(f)
 
-                # 2. Descarga con formato 'best' para evitar errores de disponibilidad
                 ydl_opts = {
                     'format': 'best',
                     'outtmpl': '/tmp/audio_%(ext)s',
@@ -48,18 +48,14 @@ if st.button("Transcribir ahora"):
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([url_video])
                 
-                # 3. Encontrar el archivo descargado
                 files = glob.glob("/tmp/audio_*")
                 if not files:
-                    raise Exception("No se pudo descargar el audio. La plataforma bloqueó la IP o el video no está disponible.")
+                    raise Exception("No se pudo descargar el audio.")
                 
                 filename = files[0]
-                
-                # 4. Transcripción
                 model = whisper.load_model("base")
                 resultado = model.transcribe(filename)
                 
-                # 5. Variación de texto para "engañar" al algoritmo
                 texto = resultado["text"]
                 if random.random() > 0.5:
                     texto = texto.replace("!", ".").replace("?", ".")
@@ -71,6 +67,6 @@ if st.button("Transcribir ahora"):
                     
             except Exception as e:
                 st.error(f"Error técnico: {e}")
-                st.write("Tip: Si el error persiste, intenta con otro video o verifica que el enlace sea público.")
+                st.write("Si el error persiste, intenta con otro video.")
     else:
         st.warning("Introduce una URL.")
