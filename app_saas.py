@@ -17,7 +17,7 @@ st.markdown("""
         border-radius: 10px !important; border: 2px solid #84139B !important; 
     }
     .stTextInput>div>div>input {
-        background-color: #1a1a1a !important; color: #ffffff !important; 
+        background-color: #2a2a2a !important; color: #ffffff !important; 
         border: 2px solid #84139B !important; border-radius: 10px !important;
     }
     </style>
