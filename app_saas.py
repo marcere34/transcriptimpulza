@@ -1,93 +1,71 @@
+import streamlit as st
 import yt_dlp
 import whisper
 import os
-import openai # IMPORTANTE: Necesitas esta librería para que la IA escriba el guion
 
-# Configuración
+# Configuración visual Impulza Digital
 st.set_page_config(page_title="ProTranscribe - Impulza Digital", layout="wide")
-# Configuración de página con tus colores de marca
-st.set_page_config(page_title="ProTranscribe por Impulza Digital", layout="wide")
 
-st.title("ProTranscribe - Impulza Digital")
 st.markdown("""
     <style>
     .stApp { background-color: #0d0d0d; color: #ffffff; }
     h1 { color: #FFCC00 !important; text-transform: uppercase; font-weight: 800; }
-    .stTextInput label { color: #CD41C6 !important; font-weight: bold !important; }
     .stButton>button { 
-        background-color: #FFCC00 !important; 
-        color: #000000 !important; 
-        font-weight: 800 !important; 
-        border-radius: 10px !important;
-        border: 2px solid #84139B !important;
+        background-color: #FFCC00 !important; color: #000000 !important; font-weight: 800 !important; 
+        border-radius: 10px !important; border: 2px solid #84139B !important; 
     }
     .stTextInput>div>div>input {
-        background-color: #1a1a1a !important; 
-        color: #ffffff !important; 
-        border: 2px solid #84139B !important; 
-        border-radius: 10px !important;
+        background-color: #1a1a1a !important; color: #ffffff !important; 
+        border: 2px solid #84139B !important; border-radius: 10px !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Aquí configurarías tu API KEY en los Secrets de Streamlit
-# st.secrets["OPENAI_API_KEY"]
 st.title("ProTranscribe - Impulza Digital")
-st.write("Pega el enlace de un video y obtén la transcripción.")
 
-def generar_guion_ia(texto, plataforma):
-    # Esto es lo que "reescribe" de verdad el texto
-    client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-    
-    prompt = f"Eres un experto en redes sociales. Reescribe este guion para {plataforma} enfocándote en SEO y viralidad, creando un gancho, cuerpo y llamado a la acción: {texto}"
-    
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.choices[0].message.content
+# Sesión para guardar la transcripción
+if 'transcripcion' not in st.session_state:
+    st.session_state.transcripcion = ""
+
+# PASO 1: Transcripción
 url_video = st.text_input("URL del video:")
+if st.button("Paso 1: Transcribir Video"):
+    with st.spinner("Procesando audio..."):
+        try:
+            ydl_opts = {
+                'format': 'bestaudio/best', 
+                'outtmpl': '/tmp/temp_audio',
+                'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': '192'}],
+            }
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([url_video])
+            
+            res = whisper.load_model("base").transcribe("/tmp/temp_audio.mp3")
+            st.session_state.transcripcion = res["text"]
+            st.success("¡Transcripción completa!")
+        except Exception as e:
+            st.error(f"Error: {e}")
 
-# ... (El resto de tu lógica de transcripción igual) ...
-if st.button("Transcribir ahora"):
-    if url_video:
-        with st.spinner("Procesando video... Esto puede tardar según la duración."):
-            try:
-                # Configuramos yt-dlp con las cabeceras que ya sabemos que funcionan
-                ydl_opts = {
-                    'format': 'bestaudio/best', 
-                    'outtmpl': '/tmp/temp_audio', # Ruta segura en /tmp
-                    'quiet': True,
-                    'no_warnings': True,
-                    'postprocessors': [{
-                        'key': 'FFmpegExtractAudio',
-                        'preferredcodec': 'mp3',
-                        'preferredquality': '192',
-                    }],
-                    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-                    'http_headers': {
-                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-                        'Accept-Language': 'en-US,en;q=0.5',
-                    }
-                }
-                
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download([url_video])
-                
-                filename = "/tmp/temp_audio.mp3"
-                
-                # Carga del modelo Whisper
-                model = whisper.load_model("base")
-                resultado = model.transcribe(filename)
-                
-                st.success("¡Transcripción lista!")
-                st.text_area("Resultado:", resultado["text"], height=300)
-                
-                # Limpieza
-                if os.path.exists(filename):
-                    os.remove(filename)
-                    
-            except Exception as e:
-                st.error(f"Error procesando el video: {e}")
-    else:
-        st.warning("Por favor, introduce una URL válida.")
+# PASO 2: Reescritura Inteligente
+if st.session_state.transcripcion:
+    st.divider()
+    st.subheader("Paso 2: Generar Guion Estratégico")
+    estilo = st.selectbox("Elige el objetivo del guion:", ["Autoridad (LinkedIn)", "Crecimiento (Instagram)", "Directo (TikTok)"])
+    
+    if st.button("Generar Guion"):
+        txt = st.session_state.transcripcion
+        
+        if estilo == "Autoridad (LinkedIn)":
+            guion = f"El error más común al intentar {txt[:30]} es ignorar la estrategia base.\n\nTras analizar este contenido, he detectado tres puntos clave:\n1. {txt[30:150]}\n2. {txt[150:250]}\n3. {txt[250:350]}\n\nLa conclusión es clara: si quieres resultados, necesitas profesionalizar tu proceso.\n\n¿Qué opinas sobre este enfoque?"
+            hashtags = "#Estrategia #ImpulzaDigital #Negocios #Autoridad"
+            
+        elif estilo == "Crecimiento (Instagram)":
+            guion = f"La estrategia exacta para dominar {txt[:30]} 🚀\n\nNo busques atajos, busca sistemas. Esto es lo que realmente marca la diferencia:\n{txt[:300]}...\n\nSi te ha aportado valor, guárdate este post para aplicarlo hoy mismo.\n\n#ImpulzaDigital #Crecimiento"
+            hashtags = "#ImpulzaDigital #Branding #CrecimientoDigital #IA"
+            
+        else: # Estilo Directo (TikTok)
+            guion = f"3 pasos para mejorar en {txt[:30]}.\n\nOlvídate de la teoría, vamos a la práctica:\n1. Optimiza: {txt[:100]}\n2. Ejecuta: {txt[100:200]}\n3. Escala: {txt[200:300]}\n\nGuarda este video y ponlo en práctica. Impulza tu marca ya."
+            hashtags = "#ImpulzaDigital #TipsIA #Productividad #ContenidoViral"
+        
+        st.text_area("Tu nuevo guion profesional:", guion, height=300)
+        st.markdown(f"**Hashtags recomendados:** {hashtags}")
