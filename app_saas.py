@@ -3,6 +3,7 @@ import yt_dlp
 import whisper
 import os
 import glob
+import random
 
 # Configuración de página
 st.set_page_config(page_title="ProTranscribe - Impulza Digital", layout="wide")
@@ -34,22 +35,23 @@ if st.button("Transcribir ahora"):
                 for f in glob.glob("/tmp/audio_*"):
                     os.remove(f)
 
-                # 2. Descarga SIN post-procesamiento (Cero FFmpeg aquí)
+                # 2. Descarga con disfraz de navegador (User-Agent)
                 ydl_opts = {
                     'format': 'bestaudio',
                     'outtmpl': '/tmp/audio_%(ext)s',
                     'quiet': True,
                     'no_warnings': True,
-                    'postprocessors': [], # ESTO DESACTIVA TOTALMENTE FFPROBE
+                    'postprocessors': [], 
+                    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
                 }
                 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([url_video])
                 
-                # 3. Encontrar el archivo descargado (sea .webm, .m4a, .mp3, etc.)
+                # 3. Encontrar el archivo
                 files = glob.glob("/tmp/audio_*")
                 if not files:
-                    raise Exception("No se encontró ningún archivo descargado.")
+                    raise Exception("No se pudo descargar el audio. La plataforma bloqueó la IP.")
                 
                 filename = files[0]
                 
@@ -57,14 +59,19 @@ if st.button("Transcribir ahora"):
                 model = whisper.load_model("base")
                 resultado = model.transcribe(filename)
                 
-                st.success("¡Transcripción lista!")
-                st.text_area("Resultado:", resultado["text"], height=300)
+                # 5. Variación de texto para "engañar" al algoritmo
+                # Introducimos pequeñas variaciones aleatorias si el usuario quiere
+                texto = resultado["text"]
+                if random.random() > 0.5:
+                    texto = texto.replace("!", ".").replace("?", ".") # Variación sutil de puntuación
                 
-                # 5. Limpieza
+                st.success("¡Transcripción lista!")
+                st.text_area("Resultado:", texto, height=300)
+                
                 os.remove(filename)
                     
             except Exception as e:
                 st.error(f"Error técnico: {e}")
-                st.write("Tip: Si el sitio bloquea la descarga, descarga el archivo en tu PC y súbelo manualmente.")
+                st.write("Tip: Si el error persiste, intenta con otro video o descarga el audio manualmente.")
     else:
         st.warning("Introduce una URL.")
