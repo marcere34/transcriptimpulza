@@ -2,10 +2,10 @@ import streamlit as st
 import yt_dlp
 import whisper
 import os
+import glob
 
-# Configuración de página con tus colores de marca
+# Configuración visual
 st.set_page_config(page_title="ProTranscribe - Impulza Digital", layout="wide")
-
 st.markdown("""
     <style>
     .stApp { background-color: #0d0d0d; color: #ffffff; }
@@ -29,33 +29,41 @@ if st.button("Transcribir ahora"):
     if url_video:
         with st.spinner("Descargando y procesando..."):
             try:
-                # SOLUCIÓN DEFINITIVA: postprocessors: [] desactiva ffmpeg por completo
+                # Limpieza previa de cualquier residuo en /tmp
+                for f in glob.glob("/tmp/audio_impulza*"):
+                    os.remove(f)
+
+                # Descarga sin forzar extensiones
                 ydl_opts = {
-                    'format': 'bestaudio/best',
-                    'outtmpl': '/tmp/audio_final',
+                    'format': 'best',
+                    'outtmpl': '/tmp/audio_impulza',
                     'quiet': True,
                     'no_warnings': True,
-                    'postprocessors': [], 
-                    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
                 }
                 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    info = ydl.extract_info(url_video, download=True)
-                    # Detectamos el archivo real descargado aunque la extensión varíe
-                    filename = "/tmp/audio_final." + info.get('ext')
+                    ydl.download([url_video])
                 
-                # Carga del modelo Whisper
+                # BUSCADOR INTELIGENTE: Busca cualquier archivo que haya creado yt-dlp
+                lista_archivos = glob.glob("/tmp/audio_impulza*")
+                
+                if not lista_archivos:
+                    raise Exception("No se encontró ningún archivo descargado.")
+                
+                filename = lista_archivos[0]
+                
+                # Transcripción
                 model = whisper.load_model("base")
                 resultado = model.transcribe(filename)
                 
                 st.success("¡Transcripción lista!")
                 st.text_area("Resultado:", resultado["text"], height=300)
                 
-                if os.path.exists(filename):
-                    os.remove(filename)
+                # Limpieza final
+                os.remove(filename)
                     
             except Exception as e:
                 st.error(f"Error técnico: {e}")
-                st.write("Si el error persiste, usa la opción de subir archivo manualmente.")
+                st.write("Si el error persiste, el sitio está bloqueando la IP.")
     else:
-        st.warning("Introduce una URL.")
+        st.warning("Por favor, introduce una URL válida.")
