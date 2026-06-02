@@ -35,9 +35,9 @@ if st.button("Transcribir ahora"):
                 for f in glob.glob("/tmp/audio_*"):
                     os.remove(f)
 
-                # 2. Descarga con disfraz de navegador (User-Agent)
+                # 2. Descarga con formato 'best' para evitar errores de disponibilidad
                 ydl_opts = {
-                    'format': 'bestaudio',
+                    'format': 'best',
                     'outtmpl': '/tmp/audio_%(ext)s',
                     'quiet': True,
                     'no_warnings': True,
@@ -48,10 +48,10 @@ if st.button("Transcribir ahora"):
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([url_video])
                 
-                # 3. Encontrar el archivo
+                # 3. Encontrar el archivo descargado
                 files = glob.glob("/tmp/audio_*")
                 if not files:
-                    raise Exception("No se pudo descargar el audio. La plataforma bloqueó la IP.")
+                    raise Exception("No se pudo descargar el audio. La plataforma bloqueó la IP o el video no está disponible.")
                 
                 filename = files[0]
                 
@@ -60,10 +60,9 @@ if st.button("Transcribir ahora"):
                 resultado = model.transcribe(filename)
                 
                 # 5. Variación de texto para "engañar" al algoritmo
-                # Introducimos pequeñas variaciones aleatorias si el usuario quiere
                 texto = resultado["text"]
                 if random.random() > 0.5:
-                    texto = texto.replace("!", ".").replace("?", ".") # Variación sutil de puntuación
+                    texto = texto.replace("!", ".").replace("?", ".")
                 
                 st.success("¡Transcripción lista!")
                 st.text_area("Resultado:", texto, height=300)
@@ -72,6 +71,6 @@ if st.button("Transcribir ahora"):
                     
             except Exception as e:
                 st.error(f"Error técnico: {e}")
-                st.write("Tip: Si el error persiste, intenta con otro video o descarga el audio manualmente.")
+                st.write("Tip: Si el error persiste, intenta con otro video o verifica que el enlace sea público.")
     else:
         st.warning("Introduce una URL.")
