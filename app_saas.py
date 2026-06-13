@@ -27,45 +27,56 @@ for f in glob.glob("/tmp/audio_*"):
     try: os.remove(f)
     except: pass
 
-tab1, tab2 = st.tabs(["🔗 Pegar URL", "📁 Subir Video/Audio"])
+# Usamos variables de sesión para mantener el estado entre interacciones
+if 'file_path' not in st.session_state:
+    st.session_state.file_path = None
 
-file_path = None
+tab1, tab2 = st.tabs(["🔗 Pegar URL", "📁 Subir Video/Audio"])
 
 with tab1:
     url_video = st.text_input("URL del video:")
-    if url_video and st.button("Transcribir URL"):
-        with st.spinner("Conectando..."):
-            try:
-                # Usamos una ruta única para evitar colisiones
-                output_template = "/tmp/audio_final"
-                ydl_opts = {
-                    'format': 'best',
-                    'outtmpl': output_template,
-                    'quiet': True,
-                    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
-                }
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download([url_video])
-                
-                # Buscar cualquier archivo que empiece con el nombre de salida
-                possible_files = glob.glob(f"{output_template}*")
-                if possible_files: file_path = possible_files[0]
-            except Exception as e: st.error(f"Error de descarga: {e}")
+    if st.button("Transcribir URL"):
+        if url_video:
+            with st.spinner("Conectando..."):
+                try:
+                    output_template = "/tmp/audio_final"
+                    ydl_opts = {
+                        'format': 'best',
+                        'outtmpl': output_template,
+                        'quiet': True,
+                        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+                    }
+                    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                        ydl.download([url_video])
+                    
+                    possible_files = glob.glob(f"{output_template}*")
+                    if possible_files: st.session_state.file_path = possible_files[0]
+                except Exception as e: st.error(f"Error de descarga: {e}")
+        else:
+            st.warning("Por favor, ingresa una URL.")
 
 with tab2:
     uploaded_file = st.file_uploader("Sube tu archivo:", type=['mp4', 'mp3', 'wav', 'webm'])
-    if uploaded_file and st.button("Transcribir Archivo"):
-        file_path = f"/tmp/{uploaded_file.name}"
-        with open(file_path, "wb") as f: f.write(uploaded_file.getbuffer())
+    if st.button("Transcribir Archivo"):
+        if uploaded_file:
+            path = f"/tmp/{uploaded_file.name}"
+            with open(path, "wb") as f: f.write(uploaded_file.getbuffer())
+            st.session_state.file_path = path
+        else:
+            st.warning("Por favor, sube un archivo primero.")
 
-if file_path:
+# Proceso de transcripción
+if st.session_state.file_path:
     try:
         with st.spinner("La IA está transcribiendo..."):
             model = whisper.load_model("base")
-            resultado = model.transcribe(file_path)
+            resultado = model.transcribe(st.session_state.file_path)
             st.success("¡Transcripción lista!")
             st.text_area("Resultado:", resultado["text"], height=300)
         
-        if os.path.exists(file_path): os.remove(file_path)
+        if os.path.exists(st.session_state.file_path): 
+            os.remove(st.session_state.file_path)
+        st.session_state.file_path = None
     except Exception as e:
         st.error(f"Error en IA: {e}")
+        st.session_state.file_path = None
