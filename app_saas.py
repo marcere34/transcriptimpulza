@@ -22,12 +22,11 @@ st.markdown("""
 
 st.title("ProTranscribe - Impulza Digital")
 
-# Limpieza inicial de archivos huérfanos al cargar la app
+# Limpieza inicial
 for f in glob.glob("/tmp/audio_*"):
     try: os.remove(f)
     except: pass
 
-# Usamos variables de sesión para mantener el estado entre interacciones
 if 'file_path' not in st.session_state:
     st.session_state.file_path = None
 
@@ -56,16 +55,16 @@ with tab1:
             st.warning("Por favor, ingresa una URL.")
 
 with tab2:
-    uploaded_file = st.file_uploader("Sube tu archivo:", type=['mp4', 'mp3', 'wav', 'webm'])
-    if st.button("Transcribir Archivo"):
-        if uploaded_file:
+    # El file_uploader ahora es persistente y está siempre visible en la pestaña
+    uploaded_file = st.file_uploader("Sube tu archivo (mp4, mp3, wav, webm):", type=['mp4', 'mp3', 'wav', 'webm'])
+    
+    if uploaded_file is not None:
+        if st.button("Procesar Archivo Subido"):
             path = f"/tmp/{uploaded_file.name}"
             with open(path, "wb") as f: f.write(uploaded_file.getbuffer())
             st.session_state.file_path = path
-        else:
-            st.warning("Por favor, sube un archivo primero.")
 
-# Proceso de transcripción
+# Proceso de transcripción unificado
 if st.session_state.file_path:
     try:
         with st.spinner("La IA está transcribiendo..."):
@@ -74,6 +73,7 @@ if st.session_state.file_path:
             st.success("¡Transcripción lista!")
             st.text_area("Resultado:", resultado["text"], height=300)
         
+        # Limpieza después de procesar
         if os.path.exists(st.session_state.file_path): 
             os.remove(st.session_state.file_path)
         st.session_state.file_path = None
