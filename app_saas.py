@@ -360,7 +360,7 @@ st.markdown(
     button[data-baseweb="tab"] * {
     color: #FFFFFF !important;
     opacity: 1 !important;
-}
+    }
 
     button[data-baseweb="tab"]:hover {
         border-color:
@@ -375,19 +375,15 @@ st.markdown(
     }
 
     button[data-baseweb="tab"][aria-selected="true"] {
-        border-color:
-            var(--yellow) !important;
-        background:
-            var(--yellow) !important;
-        color: #090900 !important;
-        box-shadow:
-            0 12px 30px
-            rgba(255, 204, 0, 0.18) !important;
-    }
+    border-color: var(--yellow) !important;
+    background: var(--yellow) !important;
+    color: #090900 !important;
+}
 
-    div[data-baseweb="tab-highlight"] {
-        display: none !important;
-    }
+button[data-baseweb="tab"][aria-selected="true"] * {
+    color: #090900 !important;
+    fill: #090900 !important;
+}
 
     /* =========================
        ETIQUETAS
