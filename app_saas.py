@@ -644,16 +644,18 @@ div[data-testid="stTab"][data-selected="true"] p {
     -webkit-text-fill-color: #FFCC00 !important;
     opacity: 1 !important;
 }
-     @media (min-width: 769px) {
-    div[data-testid="stTab"][aria-selected="false"] p,
-    div[data-testid="stTab"][data-selected="false"] p,
-    div[data-testid="stTab"][aria-selected="false"] *,
-    div[data-testid="stTab"][data-selected="false"] * {
+     @media screen and (min-width: 769px) {
+    div[data-testid="stTabs"] div[role="tab"] p {
         color: #FFFFFF !important;
         -webkit-text-fill-color: #FFFFFF !important;
         opacity: 1 !important;
     }
-}   
+
+    div[data-testid="stTabs"] div[role="tab"][aria-selected="true"] p {
+        color: #FFCC00 !important;
+        -webkit-text-fill-color: #FFCC00 !important;
+    }
+}  
     </style>
     """,
     unsafe_allow_html=True,
