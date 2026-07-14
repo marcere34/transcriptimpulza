@@ -1,6 +1,7 @@
 import base64
 import glob
 import os
+from pathlib import Path
 
 import streamlit as st
 import whisper
@@ -26,17 +27,15 @@ st.set_page_config(
 # =========================================================
 
 def cargar_logo_base64():
+    ruta_logo = Path(__file__).parent / "logo_impulza.png"
+
     try:
-        with open("logo_impulza.png", "rb") as archivo_logo:
+        with open(ruta_logo, "rb") as archivo_logo:
             return base64.b64encode(
                 archivo_logo.read()
             ).decode("utf-8")
     except OSError:
         return ""
-
-
-logo_base64 = cargar_logo_base64()
-
 
 # =========================================================
 # APARIENCIA SAAS PRO — IMPULZA DIGITAL
