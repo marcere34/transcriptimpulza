@@ -626,13 +626,22 @@ button[data-baseweb="tab"][aria-selected="true"] * {
             grid-template-columns:
                 1fr !important;
         }
-div[data-testid="stMarkdownContainer"] p {
+/* Texto de las pestañas */
+div[data-testid="stTab"] p {
     color: #FFFFFF !important;
     opacity: 1 !important;
 }
 
-div[role="tab"][aria-selected="true"] div[data-testid="stMarkdownContainer"] p {
-    color: #090900 !important;
+/* Pestaña activa */
+div[data-testid="stTab"][aria-selected="true"] p {
+    color: #FFCC00 !important;
+    opacity: 1 !important;
+}
+
+/* Pestaña inactiva */
+div[data-testid="stTab"][aria-selected="false"] p {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
 }
         
     </style>
