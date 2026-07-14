@@ -436,6 +436,214 @@ st.markdown(
         }
     }
 
+/* ===== ENCABEZADO SAAS PREMIUM ===== */
+
+.app-shell {
+    margin-bottom: 24px;
+    padding: 26px 30px 34px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    background:
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(132,19,155,0.22),
+            transparent 26%
+        ),
+        linear-gradient(
+            145deg,
+            #151219 0%,
+            #0d0b10 100%
+        );
+    box-shadow:
+        0 28px 70px rgba(0,0,0,0.38);
+}
+
+.app-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 48px;
+}
+
+.brand-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-logo {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background:
+        linear-gradient(
+            135deg,
+            #84139B,
+            #CD41C6
+        );
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 900;
+    box-shadow:
+        0 12px 28px rgba(132,19,155,0.32);
+}
+
+.brand-name {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.brand-by {
+    margin-top: 2px;
+    color: #8f8995;
+    font-size: 11px;
+}
+
+.status-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.035);
+    color: #aaa3af;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #28c879;
+    box-shadow:
+        0 0 12px rgba(40,200,121,0.65);
+}
+
+.hero-content {
+    max-width: 760px;
+}
+
+.hero-tag {
+    margin-bottom: 15px;
+    color: #FFCC00;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.8px;
+}
+
+.hero-content h1 {
+    margin: 0;
+    max-width: 800px;
+    color: #ffffff !important;
+    font-size: clamp(38px, 6vw, 64px) !important;
+    line-height: 1.02 !important;
+    letter-spacing: -3px !important;
+    font-weight: 850 !important;
+}
+
+.hero-content h1 span {
+    color: #FFCC00;
+}
+
+.hero-content p {
+    max-width: 650px;
+    margin: 18px 0 0;
+    color: #aaa3af;
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+/* ===== PESTAÑAS MÁS LEGIBLES ===== */
+
+div[data-baseweb="tab-list"] {
+    margin-top: 8px;
+    padding: 5px;
+    border-radius: 14px;
+    background: #111015;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+button[data-baseweb="tab"] {
+    min-height: 46px;
+    padding: 10px 20px;
+    color: #a9a3ae !important;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+button[data-baseweb="tab"][aria-selected="true"] {
+    color: #ffffff !important;
+    background:
+        linear-gradient(
+            135deg,
+            #84139B,
+            #a92ab1
+        ) !important;
+    box-shadow:
+        0 8px 22px rgba(132,19,155,0.30);
+}
+
+/* ===== CAMPO URL OSCURO ===== */
+
+div[data-baseweb="input"] > div {
+    background: #111015 !important;
+    border: 1px solid rgba(255,255,255,0.10) !important;
+}
+
+div[data-baseweb="input"] input {
+    color: #ffffff !important;
+}
+
+div[data-baseweb="input"] input::placeholder {
+    color: #6e6873 !important;
+}
+
+/* ===== BOTÓN MÁS PROFESIONAL ===== */
+
+.stButton > button {
+    width: auto !important;
+    min-width: 210px;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+    background:
+        linear-gradient(
+            135deg,
+            #84139B,
+            #CD41C6
+        ) !important;
+    border-radius: 13px !important;
+}
+
+/* MÓVIL */
+
+@media (max-width: 700px) {
+    .app-shell {
+        padding: 20px;
+    }
+
+    .app-topbar {
+        margin-bottom: 34px;
+    }
+
+    .status-box {
+        display: none;
+    }
+
+    .hero-content h1 {
+        font-size: 40px !important;
+        letter-spacing: -2px !important;
+    }
+
+    .stButton > button {
+        width: 100% !important;
+    }
+}
     </style>
     """,
     unsafe_allow_html=True,
@@ -447,17 +655,40 @@ st.markdown(
 # =========================================================
 
 st.markdown(
-    '<div style="background:linear-gradient(135deg,#16121A 0%,#100D13 55%,#09080B 100%);padding:38px;border-radius:26px;color:#FFFFFF;margin-bottom:28px;border:1px solid rgba(255,255,255,0.09);box-shadow:0 25px 70px rgba(0,0,0,0.45);">'
-    '<div style="display:inline-block;padding:8px 13px;border-radius:999px;background:rgba(255,204,0,0.10);border:1px solid rgba(255,204,0,0.25);color:#FFCC00;font-size:12px;font-weight:800;letter-spacing:1.5px;margin-bottom:18px;">IMPULZA DIGITAL</div>'
-    '<div style="font-size:50px;font-weight:850;line-height:1.05;letter-spacing:-2px;margin-bottom:15px;color:#FFFFFF;">ProTranscribe <span style="color:#FFCC00;">AI</span></div>'
-    '<div style="font-size:17px;line-height:1.7;max-width:760px;color:#B9B3BD;">Transcribe videos y audios desde una URL o subiendo un archivo. Después traduce el resultado al idioma que necesites.</div>'
-    '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;">'
-    '<span style="padding:8px 12px;border-radius:999px;background:rgba(132,19,155,0.20);border:1px solid rgba(205,65,198,0.24);color:#F3D9F1;font-size:12px;font-weight:650;">URL de video</span>'
-    '<span style="padding:8px 12px;border-radius:999px;background:rgba(132,19,155,0.20);border:1px solid rgba(205,65,198,0.24);color:#F3D9F1;font-size:12px;font-weight:650;">Subir archivo</span>'
-    '<span style="padding:8px 12px;border-radius:999px;background:rgba(255,204,0,0.08);border:1px solid rgba(255,204,0,0.22);color:#FFDD55;font-size:12px;font-weight:650;">Traducción automática</span>'
-    '</div>'
-    '</div>',
-    unsafe_allow_html=True
+    """
+    <div class="app-shell">
+        <div class="app-topbar">
+            <div class="brand-box">
+                <div class="brand-logo">P</div>
+
+                <div>
+                    <div class="brand-name">ProTranscribe AI</div>
+                    <div class="brand-by">Impulza Digital</div>
+                </div>
+            </div>
+
+            <div class="status-box">
+                <span class="status-dot"></span>
+                Sistema listo
+            </div>
+        </div>
+
+        <div class="hero-content">
+            <div class="hero-tag">TRANSCRIPCIÓN CON IA</div>
+
+            <h1>
+                Convierte videos y audios
+                <span>en texto</span>
+            </h1>
+
+            <p>
+                Pega una URL o sube un archivo para transcribirlo
+                y traducirlo automáticamente.
+            </p>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
 # =========================================================
