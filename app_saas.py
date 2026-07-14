@@ -637,22 +637,12 @@ st.markdown(
 # ENCABEZADO VISUAL
 # =========================================================
 
-if logo_base64:
-    logo_html = (
-        f'<img class="pt-logo" '
-        f'src="data:image/png;base64,{logo_base64}" '
-        f'alt="Impulza Digital">'
-    )
-else:
-    logo_html = (
-        '<div style="'
-        'font-size:22px;'
-        'font-weight:900;'
-        'color:#FFFFFF;'
-        '">'
-        'IMPULZA DIGITAL'
-        '</div>'
-    )
+logo_html = (
+    '<img class="pt-logo" '
+    'src="https://raw.githubusercontent.com/'
+    'marcere34/transcriptimpulza/main/logo_impulza.png" '
+    'alt="Impulza Digital">'
+)
 
 
 st.markdown(
