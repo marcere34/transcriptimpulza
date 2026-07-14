@@ -357,6 +357,11 @@ st.markdown(
         font-weight: 800 !important;
     }
 
+    button[data-baseweb="tab"] * {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
+}
+
     button[data-baseweb="tab"]:hover {
         border-color:
             rgba(255, 204, 0, 0.52) !important;
