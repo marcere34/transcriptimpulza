@@ -960,7 +960,7 @@ if st.session_state.texto_transcrito:
       "La transcripción se completó correctamente."
    )
 
-    texto_actualizado = st.text_area(
+  texto_actualizado = st.text_area(
         "Transcripción original:",
         value=st.session_state.texto_transcrito,
         height=280,
