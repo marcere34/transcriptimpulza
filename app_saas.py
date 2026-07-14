@@ -626,21 +626,20 @@ button[data-baseweb="tab"][aria-selected="true"] * {
             grid-template-columns:
                 1fr !important;
         }
-/* Todas las pestañas visibles en blanco */
-div[data-testid="stTab"] {
+div[data-testid="stTab"][aria-selected="false"],
+div[data-testid="stTab"][data-selected="false"] {
     opacity: 1 !important;
-    color: #FFFFFF !important;
 }
 
-div[data-testid="stTab"] * {
+div[data-testid="stTab"][aria-selected="false"] p,
+div[data-testid="stTab"][data-selected="false"] p {
     color: #FFFFFF !important;
     -webkit-text-fill-color: #FFFFFF !important;
     opacity: 1 !important;
 }
 
-/* Pestaña seleccionada en amarillo */
-div[data-testid="stTab"][data-selected="true"] *,
-div[data-testid="stTab"][aria-selected="true"] * {
+div[data-testid="stTab"][aria-selected="true"] p,
+div[data-testid="stTab"][data-selected="true"] p {
     color: #FFCC00 !important;
     -webkit-text-fill-color: #FFCC00 !important;
     opacity: 1 !important;
