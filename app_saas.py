@@ -644,7 +644,16 @@ div[data-testid="stTab"][data-selected="true"] p {
     -webkit-text-fill-color: #FFCC00 !important;
     opacity: 1 !important;
 }
-        
+     @media (min-width: 769px) {
+    div[data-testid="stTab"][aria-selected="false"] p,
+    div[data-testid="stTab"][data-selected="false"] p,
+    div[data-testid="stTab"][aria-selected="false"] *,
+    div[data-testid="stTab"][data-selected="false"] * {
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+        opacity: 1 !important;
+    }
+}   
     </style>
     """,
     unsafe_allow_html=True,
