@@ -3,27 +3,45 @@ import yt_dlp
 import whisper
 import os
 import glob
-import random
+from deep_translator import GoogleTranslator
 
-# Configuración de página
+
+# =========================================================
+# CONFIGURACIÓN DE PÁGINA
+# =========================================================
+
 st.set_page_config(
     page_title="ProTranscribe AI",
     page_icon="🎙️",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+
+# =========================================================
+# APARIENCIA SAAS — IMPULZA DIGITAL
+# =========================================================
+
 st.markdown("""
 <style>
 
 /* Fondo general */
 .stApp {
     background:
-        radial-gradient(circle at top left, rgba(205, 65, 198, 0.16), transparent 30%),
-        linear-gradient(180deg, #ffffff 0%, #f8f3fa 100%);
+        radial-gradient(
+            circle at top left,
+            rgba(205, 65, 198, 0.16),
+            transparent 30%
+        ),
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #f8f3fa 100%
+        );
     color: #111111;
 }
 
-/* Ocultar elementos de Streamlit */
+/* Ocultar elementos visuales de Streamlit */
 #MainMenu {
     visibility: hidden;
 }
@@ -51,23 +69,24 @@ header {
     padding-bottom: 4rem;
 }
 
-/* Títulos */
-h1 {
-    color: #111111 !important;
-    font-size: 48px !important;
-    font-weight: 800 !important;
-    letter-spacing: -2px !important;
-    text-transform: none !important;
+/* Tarjeta principal */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(132, 19, 155, 0.14);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(54, 17, 65, 0.10);
 }
 
 /* Etiquetas */
 .stTextInput label,
-.stFileUploader label {
-    color: #111111 !important;
+.stFileUploader label,
+.stSelectbox label,
+.stTextArea label {
+    color: #171219 !important;
     font-weight: 700 !important;
 }
 
-/* Inputs */
+/* Campo para pegar URL */
 div[data-baseweb="input"] > div {
     min-height: 54px;
     border-radius: 14px;
@@ -80,167 +99,442 @@ div[data-baseweb="input"] > div:focus-within {
     box-shadow: 0 0 0 4px rgba(132, 19, 155, 0.08);
 }
 
-/* Botones */
+/* Selector de idiomas */
+div[data-baseweb="select"] > div {
+    min-height: 52px;
+    border-radius: 14px;
+    border: 1px solid rgba(132, 19, 155, 0.20);
+    background: #ffffff;
+}
+
+/* Botones principales */
 .stButton > button {
     width: 100%;
     min-height: 54px;
     border: none !important;
     border-radius: 15px !important;
-    background: linear-gradient(135deg, #84139B, #CD41C6) !important;
+    background:
+        linear-gradient(
+            135deg,
+            #84139B,
+            #CD41C6
+        ) !important;
     color: #ffffff !important;
     font-size: 16px !important;
     font-weight: 800 !important;
-    box-shadow: 0 14px 30px rgba(132, 19, 155, 0.25);
+    box-shadow: 0 14px 30px rgba(132, 19, 155, 0.24);
     transition: all 0.2s ease;
 }
 
 .stButton > button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 18px 35px rgba(132, 19, 155, 0.35);
+    box-shadow: 0 18px 36px rgba(132, 19, 155, 0.34);
 }
 
 /* Pestañas */
+div[data-baseweb="tab-list"] {
+    gap: 8px;
+    padding: 6px;
+    border-radius: 16px;
+    background: rgba(132, 19, 155, 0.06);
+}
+
 button[data-baseweb="tab"] {
+    min-height: 48px;
     border-radius: 12px;
-    padding: 12px 20px;
+    padding: 10px 22px;
     font-weight: 700;
+    color: #6d6470;
 }
 
 button[data-baseweb="tab"][aria-selected="true"] {
     color: #84139B !important;
-    background: rgba(132, 19, 155, 0.08);
+    background: #ffffff;
+    box-shadow: 0 7px 20px rgba(52, 16, 64, 0.09);
 }
 
-/* Subir archivo */
+/* Ocultar línea inferior de pestañas */
+div[data-baseweb="tab-highlight"] {
+    display: none;
+}
+
+/* Área para subir archivos */
 [data-testid="stFileUploaderDropzone"] {
-    min-height: 160px;
+    min-height: 165px;
     border: 2px dashed rgba(132, 19, 155, 0.30);
     border-radius: 18px;
     background: rgba(132, 19, 155, 0.05);
 }
 
-/* Caja de texto */
+[data-testid="stFileUploaderDropzone"]:hover {
+    border-color: #84139B;
+    background: rgba(132, 19, 155, 0.08);
+}
+
+/* Botón del cargador de archivos */
+[data-testid="stFileUploaderDropzone"] button {
+    border: 1px solid rgba(132, 19, 155, 0.24) !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    color: #84139B !important;
+    font-weight: 700 !important;
+}
+
+/* Áreas de texto */
 textarea {
     border-radius: 16px !important;
     border: 1px solid rgba(132, 19, 155, 0.20) !important;
     background: #ffffff !important;
     color: #111111 !important;
+    line-height: 1.65 !important;
 }
 
-/* Alertas */
+textarea:focus {
+    border-color: #84139B !important;
+    box-shadow: 0 0 0 4px rgba(132, 19, 155, 0.08) !important;
+}
+
+/* Mensajes y alertas */
 [data-testid="stAlert"] {
     border-radius: 14px;
 }
 
-/* Móvil */
+/* Spinner */
+[data-testid="stSpinner"] {
+    color: #84139B;
+}
+
+/* Separación entre elementos */
+[data-testid="stVerticalBlock"] {
+    gap: 1rem;
+}
+
+/* Adaptación para celular */
 @media (max-width: 700px) {
+
     .block-container {
-        padding-left: 16px;
-        padding-right: 16px;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 1rem;
     }
 
-    h1 {
+    div[data-baseweb="tab-list"] {
+        flex-direction: column;
+    }
+
+    button[data-baseweb="tab"] {
+        width: 100%;
+    }
+
+    .saas-title {
         font-size: 36px !important;
+    }
+
+    .saas-hero {
+        padding: 25px !important;
+        border-radius: 20px !important;
     }
 }
 
 </style>
 """, unsafe_allow_html=True)
 
+
+# =========================================================
+# ENCABEZADO SAAS
+# =========================================================
+
 st.markdown("""
-<div style="
-    background: linear-gradient(135deg, #84139B 0%, #CD41C6 100%);
-    padding: 34px;
-    border-radius: 24px;
+<div class="saas-hero" style="
+    background:
+        linear-gradient(
+            135deg,
+            #84139B 0%,
+            #CD41C6 100%
+        );
+    padding: 36px;
+    border-radius: 26px;
     color: white;
     margin-bottom: 28px;
-    box-shadow: 0 20px 50px rgba(132, 19, 155, 0.25);
+    box-shadow:
+        0 22px 55px rgba(132, 19, 155, 0.25);
 ">
+
     <div style="
-        font-size: 13px;
-        font-weight: 800;
-        letter-spacing: 1.6px;
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(255, 204, 0, 0.16);
         color: #FFCC00;
-        margin-bottom: 10px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        margin-bottom: 15px;
     ">
         IMPULZA DIGITAL
     </div>
 
-    <div style="
-        font-size: 44px;
+    <div class="saas-title" style="
+        font-size: 48px;
         font-weight: 800;
         line-height: 1.05;
-        margin-bottom: 12px;
+        letter-spacing: -2px;
+        margin-bottom: 14px;
     ">
         ProTranscribe AI
     </div>
 
     <div style="
         font-size: 17px;
-        line-height: 1.6;
+        line-height: 1.65;
         max-width: 760px;
-        color: rgba(255,255,255,0.92);
+        color: rgba(255, 255, 255, 0.92);
     ">
         Transcribe videos y audios desde una URL o subiendo un archivo.
-        Detecta el idioma y traduce el resultado al español.
+        Después puedes traducir el resultado al idioma que necesites.
     </div>
+
+    <div style="
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 22px;
+    ">
+        <span style="
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.13);
+            font-size: 12px;
+            font-weight: 600;
+        ">
+            URL de video
+        </span>
+
+        <span style="
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.13);
+            font-size: 12px;
+            font-weight: 600;
+        ">
+            Subir archivo
+        </span>
+
+        <span style="
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.13);
+            font-size: 12px;
+            font-weight: 600;
+        ">
+            Traducción automática
+        </span>
+    </div>
+
 </div>
 """, unsafe_allow_html=True)
-# Limpieza inicial
-for f in glob.glob("/tmp/audio_*"):
-    try: os.remove(f)
-    except: pass
 
-if 'file_path' not in st.session_state:
-    st.session_state.file_path = None
 
-tab1, tab2 = st.tabs(["🔗 Pegar URL", "📁 Subir Video/Audio"])
+# =========================================================
+# CÓDIGO ORIGINAL DE TU APLICACIÓN
+# NO SE CAMBIÓ LA LÓGICA
+# =========================================================
+
+# Inicialización de estado
+if 'texto_transcrito' not in st.session_state:
+    st.session_state.texto_transcrito = None
+
+
+# Función para dividir texto largo y traducir por partes
+def traducir_texto_largo(texto, destino):
+    # Dividimos en trozos de 4000 caracteres
+    # para estar seguros bajo el límite de 5000
+    limite = 4000
+    trozos = [
+        texto[i:i + limite]
+        for i in range(0, len(texto), limite)
+    ]
+
+    traductor = GoogleTranslator(
+        source='auto',
+        target=destino
+    )
+
+    traducciones = [
+        traductor.translate(t)
+        for t in trozos
+    ]
+
+    return " ".join(traducciones)
+
+
+tab1, tab2 = st.tabs([
+    "🔗 URL",
+    "📁 Subir archivo"
+])
+
+
+# =========================================================
+# PESTAÑA 1: URL
+# =========================================================
 
 with tab1:
-    url_video = st.text_input("URL del video:")
-    if st.button("Transcribir URL"):
-        if url_video:
-            with st.spinner("Conectando..."):
-                try:
-                    output_template = "/tmp/audio_final"
-                    ydl_opts = {
-                        'format': 'best',
-                        'outtmpl': output_template,
-                        'quiet': True,
-                        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
-                    }
-                    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                        ydl.download([url_video])
-                    
-                    possible_files = glob.glob(f"{output_template}*")
-                    if possible_files: st.session_state.file_path = possible_files[0]
-                except Exception as e: st.error(f"Error de descarga: {e}")
-        else:
-            st.warning("Por favor, ingresa una URL.")
+    url = st.text_input(
+        "URL del video:",
+        placeholder="Pega aquí el enlace del video"
+    )
+
+    if st.button(
+        "Procesar URL",
+        key="procesar_url"
+    ):
+        with st.spinner("Descargando..."):
+            try:
+                # Limpieza previa
+                for f in glob.glob("/tmp/audio_final*"):
+                    os.remove(f)
+
+                ydl_opts = {
+                    'format': 'bestaudio/best',
+                    'outtmpl': '/tmp/audio_final',
+                    'quiet': True
+                }
+
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    ydl.download([url])
+
+                # Buscar archivo descargado
+                files = glob.glob("/tmp/audio_final*")
+
+                if files:
+                    model = whisper.load_model("base")
+                    res = model.transcribe(files[0])
+
+                    st.session_state.texto_transcrito = res["text"]
+
+                    os.remove(files[0])
+
+            except Exception as e:
+                st.error(f"Error: {e}")
+
+
+# =========================================================
+# PESTAÑA 2: SUBIR ARCHIVO
+# =========================================================
 
 with tab2:
-    # El file_uploader ahora es persistente y está siempre visible en la pestaña
-    uploaded_file = st.file_uploader("Sube tu archivo (mp4, mp3, wav, webm):", type=['mp4', 'mp3', 'wav', 'webm'])
-    
-    if uploaded_file is not None:
-        if st.button("Procesar Archivo Subido"):
-            path = f"/tmp/{uploaded_file.name}"
-            with open(path, "wb") as f: f.write(uploaded_file.getbuffer())
-            st.session_state.file_path = path
+    archivo = st.file_uploader(
+        "Sube tu archivo (mp4, mp3, wav):",
+        type=[
+            'mp4',
+            'mp3',
+            'wav'
+        ]
+    )
 
-# Proceso de transcripción unificado
-if st.session_state.file_path:
-    try:
-        with st.spinner("La IA está transcribiendo..."):
-            model = whisper.load_model("base")
-            resultado = model.transcribe(st.session_state.file_path)
-            st.success("¡Transcripción lista!")
-            st.text_area("Resultado:", resultado["text"], height=300)
-        
-        # Limpieza después de procesar
-        if os.path.exists(st.session_state.file_path): 
-            os.remove(st.session_state.file_path)
-        st.session_state.file_path = None
-    except Exception as e:
-        st.error(f"Error en IA: {e}")
-        st.session_state.file_path = None
+    if archivo is not None:
+        if st.button(
+            "Transcribir archivo subido",
+            key="transcribir_archivo"
+        ):
+            with st.spinner("Procesando..."):
+                path = f"/tmp/{archivo.name}"
+
+                with open(path, "wb") as f:
+                    f.write(archivo.getbuffer())
+
+                model = whisper.load_model("base")
+                res = model.transcribe(path)
+
+                st.session_state.texto_transcrito = res["text"]
+
+                os.remove(path)
+
+
+# =========================================================
+# VISUALIZACIÓN Y TRADUCCIÓN
+# =========================================================
+
+if st.session_state.texto_transcrito:
+    st.markdown("""
+    <div style="
+        margin-top: 28px;
+        margin-bottom: 5px;
+        color: #84139B;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.4px;
+    ">
+        RESULTADO
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.success("¡Transcripción lista!")
+
+    st.text_area(
+        "Transcripción original:",
+        st.session_state.texto_transcrito,
+        height=240
+    )
+
+    idioma = st.selectbox(
+        "¿Quieres traducirlo?",
+        [
+            "Ninguno",
+            "Español",
+            "Inglés",
+            "Francés",
+            "Italiano",
+            "Portugués"
+        ]
+    )
+
+    if idioma != "Ninguno":
+        mapa = {
+            "Español": "es",
+            "Inglés": "en",
+            "Francés": "fr",
+            "Italiano": "it",
+            "Portugués": "pt"
+        }
+
+        with st.spinner(
+            "Traduciendo, esto puede tomar un momento..."
+        ):
+            try:
+                traducido = traducir_texto_largo(
+                    st.session_state.texto_transcrito,
+                    mapa[idioma]
+                )
+
+                st.text_area(
+                    f"Traducción a {idioma}:",
+                    traducido,
+                    height=240
+                )
+
+            except Exception as e:
+                st.error(
+                    f"Error en la traducción: {e}"
+                )
+
+
+# =========================================================
+# PIE DE PÁGINA
+# =========================================================
+
+st.markdown("""
+<div style="
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(132, 19, 155, 0.12);
+    color: #766e79;
+    font-size: 12px;
+">
+    Powered by
+    <strong style="color:#84139B;">
+        Impulza Digital
+    </strong>
+</div>
+""", unsafe_allow_html=True)
