@@ -644,6 +644,7 @@ div[data-testid="stTab"][data-selected="true"] p {
     -webkit-text-fill-color: #FFCC00 !important;
     opacity: 1 !important;
 }
+}
      @media screen and (min-width: 769px) {
     div[data-testid="stTabs"] div[role="tab"] p {
         color: #FFFFFF !important;
