@@ -956,8 +956,8 @@ if st.session_state.texto_transcrito:
     '</div>',
     unsafe_allow_html=True,
 )
-   st.success(
-       "La transcripción se completó correctamente."
+  st.success(
+      "La transcripción se completó correctamente."
    )
 
     texto_actualizado = st.text_area(
