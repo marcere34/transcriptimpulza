@@ -447,175 +447,18 @@ st.markdown(
 # =========================================================
 
 st.markdown(
-    """
-    <div class="saas-hero" style="
-        position: relative;
-        overflow: hidden;
-        background:
-            radial-gradient(
-                circle at 85% 15%,
-                rgba(255, 204, 0, 0.12),
-                transparent 26%
-            ),
-            radial-gradient(
-                circle at 8% 100%,
-                rgba(205, 65, 198, 0.24),
-                transparent 35%
-            ),
-            linear-gradient(
-                135deg,
-                #16121A 0%,
-                #100D13 52%,
-                #09080B 100%
-            );
-        padding: 40px;
-        border-radius: 28px;
-        color: white;
-        margin-bottom: 28px;
-        border:
-            1px solid rgba(255, 255, 255, 0.09);
-        box-shadow:
-            0 28px 85px rgba(0, 0, 0, 0.42),
-            0 0 70px rgba(132, 19, 155, 0.12);
-    ">
-
-        <div style="
-            position: absolute;
-            top: -70px;
-            right: -60px;
-            width: 230px;
-            height: 230px;
-            border-radius: 50%;
-            background:
-                rgba(132, 19, 155, 0.18);
-            filter: blur(2px);
-        ">
-        </div>
-
-        <div style="
-            position: relative;
-            z-index: 2;
-        ">
-
-            <div style="
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 13px;
-                border-radius: 999px;
-                background:
-                    rgba(255, 204, 0, 0.10);
-                border:
-                    1px solid
-                    rgba(255, 204, 0, 0.24);
-                color: #FFCC00;
-                font-size: 12px;
-                font-weight: 800;
-                letter-spacing: 1.5px;
-                margin-bottom: 18px;
-            ">
-                <span style="
-                    width: 7px;
-                    height: 7px;
-                    border-radius: 50%;
-                    background: #FFCC00;
-                    box-shadow:
-                        0 0 12px
-                        rgba(255, 204, 0, 0.75);
-                ">
-                </span>
-
-                IMPULZA DIGITAL
-            </div>
-
-            <div class="saas-title" style="
-                font-size: 50px;
-                font-weight: 850;
-                line-height: 1.02;
-                letter-spacing: -2.6px;
-                margin-bottom: 16px;
-                color: #FFFFFF;
-            ">
-                ProTranscribe
-                <span style="
-                    color: #FFCC00;
-                ">
-                    AI
-                </span>
-            </div>
-
-            <div class="hero-description" style="
-                font-size: 17px;
-                line-height: 1.7;
-                max-width: 760px;
-                color: #B9B3BD;
-            ">
-                Transcribe videos y audios desde una URL
-                o subiendo un archivo. Después traduce
-                el resultado al idioma que necesites.
-            </div>
-
-            <div style="
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
-                margin-top: 24px;
-            ">
-
-                <span style="
-                    padding: 8px 12px;
-                    border-radius: 999px;
-                    background:
-                        rgba(132, 19, 155, 0.18);
-                    border:
-                        1px solid
-                        rgba(205, 65, 198, 0.20);
-                    color: #F3D9F1;
-                    font-size: 12px;
-                    font-weight: 650;
-                ">
-                    URL de video
-                </span>
-
-                <span style="
-                    padding: 8px 12px;
-                    border-radius: 999px;
-                    background:
-                        rgba(132, 19, 155, 0.18);
-                    border:
-                        1px solid
-                        rgba(205, 65, 198, 0.20);
-                    color: #F3D9F1;
-                    font-size: 12px;
-                    font-weight: 650;
-                ">
-                    Subir archivo
-                </span>
-
-                <span style="
-                    padding: 8px 12px;
-                    border-radius: 999px;
-                    background:
-                        rgba(255, 204, 0, 0.08);
-                    border:
-                        1px solid
-                        rgba(255, 204, 0, 0.20);
-                    color: #FFDD55;
-                    font-size: 12px;
-                    font-weight: 650;
-                ">
-                    Traducción automática
-                </span>
-
-            </div>
-
-        </div>
-
-    </div>
-    """,
-    unsafe_allow_html=True,
+    '<div style="background:linear-gradient(135deg,#16121A 0%,#100D13 55%,#09080B 100%);padding:38px;border-radius:26px;color:#FFFFFF;margin-bottom:28px;border:1px solid rgba(255,255,255,0.09);box-shadow:0 25px 70px rgba(0,0,0,0.45);">'
+    '<div style="display:inline-block;padding:8px 13px;border-radius:999px;background:rgba(255,204,0,0.10);border:1px solid rgba(255,204,0,0.25);color:#FFCC00;font-size:12px;font-weight:800;letter-spacing:1.5px;margin-bottom:18px;">IMPULZA DIGITAL</div>'
+    '<div style="font-size:50px;font-weight:850;line-height:1.05;letter-spacing:-2px;margin-bottom:15px;color:#FFFFFF;">ProTranscribe <span style="color:#FFCC00;">AI</span></div>'
+    '<div style="font-size:17px;line-height:1.7;max-width:760px;color:#B9B3BD;">Transcribe videos y audios desde una URL o subiendo un archivo. Después traduce el resultado al idioma que necesites.</div>'
+    '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;">'
+    '<span style="padding:8px 12px;border-radius:999px;background:rgba(132,19,155,0.20);border:1px solid rgba(205,65,198,0.24);color:#F3D9F1;font-size:12px;font-weight:650;">URL de video</span>'
+    '<span style="padding:8px 12px;border-radius:999px;background:rgba(132,19,155,0.20);border:1px solid rgba(205,65,198,0.24);color:#F3D9F1;font-size:12px;font-weight:650;">Subir archivo</span>'
+    '<span style="padding:8px 12px;border-radius:999px;background:rgba(255,204,0,0.08);border:1px solid rgba(255,204,0,0.22);color:#FFDD55;font-size:12px;font-weight:650;">Traducción automática</span>'
+    '</div>'
+    '</div>',
+    unsafe_allow_html=True
 )
-
 
 # =========================================================
 # ESTADO ORIGINAL
