@@ -941,38 +941,21 @@ with tab2:
 # =========================================================
 
 if st.session_state.texto_transcrito:
-    st.markdown(
-        """
-        <div style="
-            margin-top: 32px;
-            padding: 22px 0 10px;
-            border-top:
-                1px solid
-                rgba(255,255,255,0.10);
-            text-align: center;
-        ">
-            <div style="
-                color: #FFCC00;
-                font-size: 11px;
-                font-weight: 900;
-                letter-spacing: 1.8px;
-                margin-bottom: 7px;
-            ">
-                RESULTADO
-            </div>
-
-            <div style="
-                color: #FFFFFF;
-                font-size: 28px;
-                font-weight: 900;
-                letter-spacing: -0.8px;
-            ">
-                Tu transcripción está lista
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+  st.markdown(
+    '<div style="margin-top:32px;padding:22px 0 10px;'
+    'border-top:1px solid rgba(255,255,255,0.10);'
+    'text-align:center;">'
+    '<div style="color:#FFCC00;font-size:11px;font-weight:900;'
+    'letter-spacing:1.8px;margin-bottom:7px;">'
+    'RESULTADO'
+    '</div>'
+    '<div style="color:#FFFFFF;font-size:28px;font-weight:900;'
+    'letter-spacing:-0.8px;">'
+    'Tu transcripción está lista'
+    '</div>'
+    '</div>',
+    unsafe_allow_html=True,
+)
 
     st.success(
         "La transcripción se completó correctamente."
