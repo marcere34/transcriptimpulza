@@ -966,11 +966,11 @@ if st.session_state.texto_transcrito:
         height=280,
     )
 
-    st.session_state.texto_transcrito = (
+  st.session_state.texto_transcrito = (
         texto_actualizado
     )
 
-    st.download_button(
+  st.download_button(
         label="Descargar transcripción TXT",
         data=texto_actualizado,
         file_name="transcripcion.txt",
@@ -978,7 +978,7 @@ if st.session_state.texto_transcrito:
         use_container_width=True,
     )
 
-    idioma = st.selectbox(
+  idioma = st.selectbox(
         "¿Quieres traducirlo?",
         [
             "Ninguno",
@@ -990,7 +990,7 @@ if st.session_state.texto_transcrito:
         ],
     )
 
-    mapa_idiomas = {
+  mapa_idiomas = {
         "Español": "es",
         "Inglés": "en",
         "Francés": "fr",
@@ -998,7 +998,7 @@ if st.session_state.texto_transcrito:
         "Portugués": "pt",
     }
 
-    if idioma != "Ninguno":
+  if idioma != "Ninguno":
         if st.button(
             f"Traducir a {idioma}",
             key="boton_traducir",
@@ -1019,7 +1019,7 @@ if st.session_state.texto_transcrito:
                         f"Error en la traducción: {error}"
                     )
 
-    if st.session_state.texto_traducido:
+  if st.session_state.texto_traducido:
         texto_traducido_editado = st.text_area(
             "Texto traducido:",
             value=(
@@ -1028,11 +1028,11 @@ if st.session_state.texto_transcrito:
             height=280,
         )
 
-        st.session_state.texto_traducido = (
+  st.session_state.texto_traducido = (
             texto_traducido_editado
         )
 
-        st.download_button(
+  st.download_button(
             label="Descargar traducción TXT",
             data=texto_traducido_editado,
             file_name="traduccion.txt",
