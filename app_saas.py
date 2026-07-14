@@ -637,19 +637,11 @@ st.markdown(
 # ENCABEZADO VISUAL
 # =========================================================
 
-ruta_logo = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "logo_impulza.png"
-)
-
-with open(ruta_logo, "rb") as archivo_logo:
-    logo_base64 = base64.b64encode(
-        archivo_logo.read()
-    ).decode("utf-8")
+ruta_logo = Path(__file__).resolve().parent / "logo_impulza.png"
 
 logo_html = (
     f'<img class="pt-logo" '
-    f'src="data:image/png;base64,{logo_base64}" '
+    f'src="data:image/png;base64,{base64.b64encode(ruta_logo.read_bytes()).decode("utf-8")}" '
     f'alt="Impulza Digital">'
 )
 
