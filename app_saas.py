@@ -36,6 +36,8 @@ def cargar_logo_base64():
             ).decode("utf-8")
     except OSError:
         return ""
+        
+logo_base64 = cargar_logo_base64()
 
 # =========================================================
 # APARIENCIA SAAS PRO — IMPULZA DIGITAL
