@@ -3,8 +3,8 @@ import os
 import streamlit as st
 import whisper
 import yt_dlp
-from deep_translator 
-import GoogleTranslator
+
+from deep_translator import GoogleTranslator
 
 
 # =========================================================
