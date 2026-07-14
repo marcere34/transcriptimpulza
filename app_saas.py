@@ -742,6 +742,35 @@ tab1, tab2 = st.tabs(
         "Subir video o audio",
     ]
 )
+st.markdown(
+    """
+    <style>
+    div[data-baseweb="tab-list"]
+    div[data-testid="stTab"][role="tab"]
+    div[data-testid="stMarkdownContainer"] p {
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+        opacity: 1 !important;
+    }
+
+    div[data-baseweb="tab-list"]
+    div[data-testid="stTab"][role="tab"]:hover
+    div[data-testid="stMarkdownContainer"] p {
+        color: #FFCC00 !important;
+        -webkit-text-fill-color: #FFCC00 !important;
+    }
+
+    div[data-baseweb="tab-list"]
+    div[data-testid="stTab"][role="tab"][aria-selected="true"]
+    div[data-testid="stMarkdownContainer"] p {
+        color: #FFCC00 !important;
+        -webkit-text-fill-color: #FFCC00 !important;
+        opacity: 1 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 # =========================================================
 # PESTAÑA 1: URL
 # =========================================================
