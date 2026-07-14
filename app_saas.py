@@ -956,7 +956,7 @@ if st.session_state.texto_transcrito:
     '</div>',
     unsafe_allow_html=True,
 )
-    st.success(
+        st.success(
         "La transcripción se completó correctamente."
     )
 
