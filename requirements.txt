@@ -4,3 +4,4 @@ openai-whisper
 ffmpeg-python
 gspread
 oauth2client
+deep-translator
