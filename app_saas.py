@@ -6,22 +6,186 @@ import glob
 import random
 
 # Configuración de página
-st.set_page_config(page_title="ProTranscribe - Impulza Digital", layout="wide")
-
+st.set_page_config(
+    page_title="ProTranscribe AI",
+    page_icon="🎙️",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 st.markdown("""
-    <style>
-    .stApp { background-color: #0d0d0d; color: #ffffff; }
-    h1 { color: #FFCC00 !important; text-transform: uppercase; font-weight: 800; }
-    .stTextInput label { color: #FFCC00 !important; font-weight: bold !important; }
-    .stButton>button { 
-        background-color: #FFCC00 !important; color: #000000 !important; font-weight: 800 !important; 
-        border-radius: 10px !important; border: 2px solid #84139B !important; 
+<style>
+
+/* Fondo general */
+.stApp {
+    background:
+        radial-gradient(circle at top left, rgba(205, 65, 198, 0.16), transparent 30%),
+        linear-gradient(180deg, #ffffff 0%, #f8f3fa 100%);
+    color: #111111;
+}
+
+/* Ocultar elementos de Streamlit */
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header {
+    background: transparent;
+}
+
+[data-testid="stToolbar"] {
+    display: none;
+}
+
+[data-testid="stDecoration"] {
+    display: none;
+}
+
+/* Contenedor principal */
+.block-container {
+    max-width: 1050px;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+/* Títulos */
+h1 {
+    color: #111111 !important;
+    font-size: 48px !important;
+    font-weight: 800 !important;
+    letter-spacing: -2px !important;
+    text-transform: none !important;
+}
+
+/* Etiquetas */
+.stTextInput label,
+.stFileUploader label {
+    color: #111111 !important;
+    font-weight: 700 !important;
+}
+
+/* Inputs */
+div[data-baseweb="input"] > div {
+    min-height: 54px;
+    border-radius: 14px;
+    border: 1px solid rgba(132, 19, 155, 0.20);
+    background: #ffffff;
+}
+
+div[data-baseweb="input"] > div:focus-within {
+    border-color: #84139B;
+    box-shadow: 0 0 0 4px rgba(132, 19, 155, 0.08);
+}
+
+/* Botones */
+.stButton > button {
+    width: 100%;
+    min-height: 54px;
+    border: none !important;
+    border-radius: 15px !important;
+    background: linear-gradient(135deg, #84139B, #CD41C6) !important;
+    color: #ffffff !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    box-shadow: 0 14px 30px rgba(132, 19, 155, 0.25);
+    transition: all 0.2s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 35px rgba(132, 19, 155, 0.35);
+}
+
+/* Pestañas */
+button[data-baseweb="tab"] {
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-weight: 700;
+}
+
+button[data-baseweb="tab"][aria-selected="true"] {
+    color: #84139B !important;
+    background: rgba(132, 19, 155, 0.08);
+}
+
+/* Subir archivo */
+[data-testid="stFileUploaderDropzone"] {
+    min-height: 160px;
+    border: 2px dashed rgba(132, 19, 155, 0.30);
+    border-radius: 18px;
+    background: rgba(132, 19, 155, 0.05);
+}
+
+/* Caja de texto */
+textarea {
+    border-radius: 16px !important;
+    border: 1px solid rgba(132, 19, 155, 0.20) !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+}
+
+/* Alertas */
+[data-testid="stAlert"] {
+    border-radius: 14px;
+}
+
+/* Móvil */
+@media (max-width: 700px) {
+    .block-container {
+        padding-left: 16px;
+        padding-right: 16px;
     }
-    </style>
+
+    h1 {
+        font-size: 36px !important;
+    }
+}
+
+</style>
 """, unsafe_allow_html=True)
 
-st.title("ProTranscribe - Impulza Digital")
+st.markdown("""
+<div style="
+    background: linear-gradient(135deg, #84139B 0%, #CD41C6 100%);
+    padding: 34px;
+    border-radius: 24px;
+    color: white;
+    margin-bottom: 28px;
+    box-shadow: 0 20px 50px rgba(132, 19, 155, 0.25);
+">
+    <div style="
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1.6px;
+        color: #FFCC00;
+        margin-bottom: 10px;
+    ">
+        IMPULZA DIGITAL
+    </div>
 
+    <div style="
+        font-size: 44px;
+        font-weight: 800;
+        line-height: 1.05;
+        margin-bottom: 12px;
+    ">
+        ProTranscribe AI
+    </div>
+
+    <div style="
+        font-size: 17px;
+        line-height: 1.6;
+        max-width: 760px;
+        color: rgba(255,255,255,0.92);
+    ">
+        Transcribe videos y audios desde una URL o subiendo un archivo.
+        Detecta el idioma y traduce el resultado al español.
+    </div>
+</div>
+""", unsafe_allow_html=True)
 # Limpieza inicial
 for f in glob.glob("/tmp/audio_*"):
     try: os.remove(f)
