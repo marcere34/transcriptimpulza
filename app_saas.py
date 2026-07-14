@@ -27,17 +27,20 @@ st.set_page_config(
 # =========================================================
 
 def cargar_logo_base64():
-    ruta_logo = Path(__file__).parent / "logo_impulza.png"
+    carpeta_app = Path(__file__).resolve().parent
 
-    try:
-        with open(ruta_logo, "rb") as archivo_logo:
+    rutas_posibles = [
+        carpeta_app / "logo_impulza.png",
+        Path.cwd() / "logo_impulza.png",
+    ]
+
+    for ruta_logo in rutas_posibles:
+        if ruta_logo.is_file():
             return base64.b64encode(
-                archivo_logo.read()
+                ruta_logo.read_bytes()
             ).decode("utf-8")
-    except OSError:
-        return ""
-        
-logo_base64 = cargar_logo_base64()
+
+    return ""
 
 # =========================================================
 # APARIENCIA SAAS PRO — IMPULZA DIGITAL
