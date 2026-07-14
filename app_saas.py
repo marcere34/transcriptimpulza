@@ -655,40 +655,27 @@ div[data-baseweb="input"] input::placeholder {
 # =========================================================
 
 st.markdown(
-    """
-    <div class="app-shell">
-        <div class="app-topbar">
-            <div class="brand-box">
-                <div class="brand-logo">P</div>
-
-                <div>
-                    <div class="brand-name">ProTranscribe AI</div>
-                    <div class="brand-by">Impulza Digital</div>
-                </div>
-            </div>
-
-            <div class="status-box">
-                <span class="status-dot"></span>
-                Sistema listo
-            </div>
-        </div>
-
-        <div class="hero-content">
-            <div class="hero-tag">TRANSCRIPCIÓN CON IA</div>
-
-            <h1>
-                Convierte videos y audios
-                <span>en texto</span>
-            </h1>
-
-            <p>
-                Pega una URL o sube un archivo para transcribirlo
-                y traducirlo automáticamente.
-            </p>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
+    '<div class="app-shell">'
+    '<div class="app-topbar">'
+    '<div class="brand-box">'
+    '<div class="brand-logo">P</div>'
+    '<div>'
+    '<div class="brand-name">ProTranscribe AI</div>'
+    '<div class="brand-by">by Impulza Digital</div>'
+    '</div>'
+    '</div>'
+    '<div class="status-box">'
+    '<span class="status-dot"></span>'
+    'Sistema listo'
+    '</div>'
+    '</div>'
+    '<div class="hero-content">'
+    '<div class="hero-tag">TRANSCRIPCIÓN CON INTELIGENCIA ARTIFICIAL</div>'
+    '<h1>Convierte videos y audios <span>en texto</span></h1>'
+    '<p>Pega una URL o sube un archivo para transcribir el contenido y traducirlo al idioma que necesites.</p>'
+    '</div>'
+    '</div>',
+    unsafe_allow_html=True
 )
 
 # =========================================================
