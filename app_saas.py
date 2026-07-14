@@ -1,5 +1,6 @@
 import glob
 import os
+import textwrap
 import streamlit as st
 import whisper
 import yt_dlp
