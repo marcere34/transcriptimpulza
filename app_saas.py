@@ -626,8 +626,7 @@ button[data-baseweb="tab"][aria-selected="true"] * {
             grid-template-columns:
                 1fr !important;
         }
-
-        div[data-testid="stMarkdownContainer"] p {
+div[data-testid="stMarkdownContainer"] p {
     color: #FFFFFF !important;
     opacity: 1 !important;
 }
@@ -635,7 +634,7 @@ button[data-baseweb="tab"][aria-selected="true"] * {
 div[role="tab"][aria-selected="true"] div[data-testid="stMarkdownContainer"] p {
     color: #090900 !important;
 }
-
+        
     </style>
     """,
     unsafe_allow_html=True,
