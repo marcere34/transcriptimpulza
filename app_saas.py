@@ -1,6 +1,7 @@
+import base64
 import glob
 import os
-import textwrap
+
 import streamlit as st
 import whisper
 import yt_dlp
@@ -14,14 +15,32 @@ from deep_translator import GoogleTranslator
 
 st.set_page_config(
     page_title="ProTranscribe AI",
-    page_icon="🎙️",
+    page_icon="logo_impulza.png",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
 
 # =========================================================
-# APARIENCIA SAAS OSCURA — IMPULZA DIGITAL
+# CARGAR LOGO
+# =========================================================
+
+def cargar_logo_base64():
+    try:
+        with open("logo_impulza.png", "rb") as archivo_logo:
+            return base64.b64encode(
+                archivo_logo.read()
+            ).decode("utf-8")
+    except OSError:
+        return ""
+
+
+logo_base64 = cargar_logo_base64()
+
+
+# =========================================================
+# APARIENCIA SAAS PRO — IMPULZA DIGITAL
+# Solo apariencia. No modifica la lógica.
 # =========================================================
 
 st.markdown(
@@ -31,13 +50,10 @@ st.markdown(
     :root {
         --purple: #84139B;
         --yellow: #FFCC00;
-        --fuchsia: #CD41C6;
-        --black: #070708;
-        --dark-card: #121116;
-        --dark-card-soft: #19171E;
+        --black: #000000;
         --white: #FFFFFF;
-        --muted: #A9A3AE;
-        --border: rgba(255, 255, 255, 0.10);
+        --glass: rgba(8, 8, 10, 0.74);
+        --border: rgba(255, 255, 255, 0.12);
     }
 
     html,
@@ -51,155 +67,376 @@ st.markdown(
             sans-serif;
     }
 
-    /* Fondo general */
+    /* Fondo principal */
     .stApp {
         background:
             radial-gradient(
-                circle at 12% 8%,
-                rgba(132, 19, 155, 0.28),
-                transparent 29%
+                circle at 12% 4%,
+                rgba(132, 19, 155, 0.38),
+                transparent 28%
             ),
             radial-gradient(
-                circle at 92% 25%,
-                rgba(205, 65, 198, 0.16),
-                transparent 26%
+                circle at 90% 12%,
+                rgba(255, 204, 0, 0.08),
+                transparent 20%
             ),
             linear-gradient(
                 180deg,
-                #08070A 0%,
-                #0D0B10 50%,
-                #070708 100%
+                #050506 0%,
+                #080709 55%,
+                #020203 100%
             );
         color: var(--white);
     }
 
-    /* Ocultar elementos visuales de Streamlit */
-    #MainMenu {
-        visibility: hidden;
-    }
-
-    footer {
-        visibility: hidden;
-    }
-
-    header {
-        background: transparent;
-    }
-
-    [data-testid="stToolbar"] {
-        display: none;
-    }
-
+    /* Ocultar interfaz visual de Streamlit */
+    #MainMenu,
+    footer,
+    [data-testid="stToolbar"],
     [data-testid="stDecoration"] {
-        display: none;
+        display: none !important;
     }
 
     [data-testid="stHeader"] {
-        background: transparent;
+        background: transparent !important;
     }
 
-    /* Contenedor principal */
+    /* Ancho y espacios */
     .block-container {
-        max-width: 1080px;
-        padding-top: 2rem;
+        max-width: 1120px;
+        padding-top: 1.4rem;
         padding-bottom: 4rem;
     }
 
-    /* Texto general */
-    p,
-    span,
-    label,
-    div {
-        color: inherit;
-    }
+    /* =========================
+       HERO SAAS
+       ========================= */
 
-    .stMarkdown,
-    .stCaption,
-    .stText {
-        color: var(--white);
-    }
-
-    [data-testid="stCaptionContainer"] {
-        color: var(--muted);
-    }
-
-    /* Tarjeta general */
-    [data-testid="stVerticalBlockBorderWrapper"] {
+    .pt-hero {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 26px;
+        padding: 36px 38px 42px;
+        border: 1px solid var(--border);
+        border-radius: 28px;
         background:
             linear-gradient(
                 145deg,
-                rgba(25, 23, 30, 0.95),
-                rgba(14, 13, 17, 0.96)
+                rgba(15, 15, 18, 0.92),
+                rgba(3, 3, 4, 0.94)
             );
-        border: 1px solid var(--border);
-        border-radius: 24px;
         box-shadow:
-            0 25px 80px rgba(0, 0, 0, 0.42);
-        backdrop-filter: blur(20px);
+            0 32px 95px rgba(0, 0, 0, 0.58),
+            0 0 95px rgba(132, 19, 155, 0.16);
+        backdrop-filter: blur(24px);
+        text-align: center;
     }
 
-    /* Etiquetas */
+    .pt-hero::before {
+        content: "";
+        position: absolute;
+        top: -220px;
+        left: 50%;
+        width: 390px;
+        height: 390px;
+        transform: translateX(-50%);
+        border-radius: 50%;
+        background: rgba(132, 19, 155, 0.52);
+        filter: blur(95px);
+        pointer-events: none;
+    }
+
+    .pt-hero::after {
+        content: "";
+        position: absolute;
+        right: -80px;
+        bottom: -110px;
+        width: 230px;
+        height: 230px;
+        border-radius: 50%;
+        background: rgba(255, 204, 0, 0.07);
+        filter: blur(65px);
+        pointer-events: none;
+    }
+
+    .pt-logo-wrap {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 26px;
+    }
+
+    .pt-logo {
+        display: block;
+        width: min(340px, 78%);
+        max-height: 86px;
+        object-fit: contain;
+        filter:
+            drop-shadow(
+                0 14px 30px
+                rgba(132, 19, 155, 0.34)
+            );
+    }
+
+    .pt-kicker {
+        position: relative;
+        z-index: 2;
+        display: inline-block;
+        margin-bottom: 13px;
+        color: var(--yellow);
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .pt-title {
+        position: relative;
+        z-index: 2;
+        max-width: 840px;
+        margin: 0 auto;
+        color: var(--white);
+        font-size:
+            clamp(42px, 5.6vw, 66px);
+        line-height: 1;
+        letter-spacing: -3.2px;
+        font-weight: 900;
+    }
+
+    .pt-title strong {
+        color: var(--yellow);
+        font-weight: 900;
+    }
+
+    .pt-description {
+        position: relative;
+        z-index: 2;
+        max-width: 690px;
+        margin: 19px auto 0;
+        color: var(--white);
+        font-size: 16px;
+        line-height: 1.7;
+        opacity: 0.82;
+    }
+
+    /* Ondas de audio */
+    .pt-wave {
+        position: relative;
+        z-index: 2;
+        height: 45px;
+        margin: 28px auto 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .pt-wave span {
+        width: 4px;
+        border-radius: 999px;
+        background:
+            linear-gradient(
+                180deg,
+                var(--yellow),
+                var(--purple)
+            );
+        box-shadow:
+            0 0 16px
+            rgba(132, 19, 155, 0.44);
+        animation:
+            ptWave 1.35s ease-in-out infinite;
+    }
+
+    .pt-wave span:nth-child(1) {
+        height: 12px;
+        animation-delay: 0.05s;
+    }
+
+    .pt-wave span:nth-child(2) {
+        height: 24px;
+        animation-delay: 0.10s;
+    }
+
+    .pt-wave span:nth-child(3) {
+        height: 38px;
+        animation-delay: 0.15s;
+    }
+
+    .pt-wave span:nth-child(4) {
+        height: 20px;
+        animation-delay: 0.20s;
+    }
+
+    .pt-wave span:nth-child(5) {
+        height: 44px;
+        animation-delay: 0.25s;
+    }
+
+    .pt-wave span:nth-child(6) {
+        height: 29px;
+        animation-delay: 0.30s;
+    }
+
+    .pt-wave span:nth-child(7) {
+        height: 15px;
+        animation-delay: 0.35s;
+    }
+
+    .pt-wave span:nth-child(8) {
+        height: 33px;
+        animation-delay: 0.40s;
+    }
+
+    .pt-wave span:nth-child(9) {
+        height: 18px;
+        animation-delay: 0.45s;
+    }
+
+    .pt-wave span:nth-child(10) {
+        height: 40px;
+        animation-delay: 0.50s;
+    }
+
+    .pt-wave span:nth-child(11) {
+        height: 22px;
+        animation-delay: 0.55s;
+    }
+
+    @keyframes ptWave {
+        0%,
+        100% {
+            transform: scaleY(0.55);
+            opacity: 0.62;
+        }
+
+        50% {
+            transform: scaleY(1);
+            opacity: 1;
+        }
+    }
+
+    /* =========================
+       PESTAÑAS
+       ========================= */
+
+    div[data-baseweb="tab-list"] {
+        display: grid !important;
+        grid-template-columns:
+            1fr 1fr !important;
+        gap: 10px !important;
+        padding: 7px !important;
+        margin-bottom: 20px !important;
+        border:
+            1px solid var(--border) !important;
+        border-radius: 18px !important;
+        background:
+            rgba(0, 0, 0, 0.56) !important;
+        backdrop-filter: blur(18px) !important;
+    }
+
+    button[data-baseweb="tab"] {
+        width: 100% !important;
+        min-height: 52px !important;
+        padding: 10px 18px !important;
+        border:
+            1px solid
+            rgba(255, 255, 255, 0.11) !important;
+        border-radius: 13px !important;
+        background:
+            rgba(255, 255, 255, 0.035) !important;
+        color: var(--white) !important;
+        font-size: 14px !important;
+        font-weight: 800 !important;
+    }
+
+    button[data-baseweb="tab"]:hover {
+        border-color:
+            rgba(255, 204, 0, 0.52) !important;
+        background:
+            rgba(255, 204, 0, 0.06) !important;
+    }
+
+    button[data-baseweb="tab"]
+    [aria-selected="true"] {
+        color: #090900 !important;
+    }
+
+    button[data-baseweb="tab"][aria-selected="true"] {
+        border-color:
+            var(--yellow) !important;
+        background:
+            var(--yellow) !important;
+        color: #090900 !important;
+        box-shadow:
+            0 12px 30px
+            rgba(255, 204, 0, 0.18) !important;
+    }
+
+    div[data-baseweb="tab-highlight"] {
+        display: none !important;
+    }
+
+    /* =========================
+       ETIQUETAS
+       ========================= */
+
     .stTextInput label,
     .stFileUploader label,
     .stSelectbox label,
     .stTextArea label {
         color: var(--white) !important;
-        font-weight: 700 !important;
         font-size: 14px !important;
+        font-weight: 800 !important;
     }
 
-    /* Campo URL */
-    div[data-baseweb="input"] > div {
-        min-height: 56px;
-        border-radius: 15px;
-        border:
-            1px solid rgba(255, 255, 255, 0.12);
-        background: #141217;
-        transition: all 0.2s ease;
-    }
+    /* =========================
+       INPUTS
+       ========================= */
 
-    div[data-baseweb="input"] > div:hover {
-        border-color:
-            rgba(205, 65, 198, 0.48);
-    }
-
-    div[data-baseweb="input"] > div:focus-within {
-        border-color: var(--fuchsia);
-        box-shadow:
-            0 0 0 4px rgba(205, 65, 198, 0.12);
-    }
-
-    div[data-baseweb="input"] input {
-        color: var(--white) !important;
-        background: transparent !important;
-    }
-
-    div[data-baseweb="input"] input::placeholder {
-        color: #77717E !important;
-    }
-
-    /* Selectores */
+    div[data-baseweb="input"] > div,
     div[data-baseweb="select"] > div {
-        min-height: 54px;
-        border-radius: 15px;
+        min-height: 56px !important;
         border:
-            1px solid rgba(255, 255, 255, 0.12);
-        background: #141217;
-        color: var(--white);
+            1px solid
+            rgba(255, 255, 255, 0.15) !important;
+        border-radius: 15px !important;
+        background:
+            rgba(0, 0, 0, 0.62) !important;
+        color: var(--white) !important;
+        box-shadow:
+            inset 0 1px 0
+            rgba(255, 255, 255, 0.03) !important;
     }
 
+    div[data-baseweb="input"] > div:focus-within,
+    div[data-baseweb="select"] > div:focus-within {
+        border-color:
+            var(--yellow) !important;
+        box-shadow:
+            0 0 0 3px
+            rgba(255, 204, 0, 0.10),
+            0 12px 32px
+            rgba(0, 0, 0, 0.28) !important;
+    }
+
+    div[data-baseweb="input"] input,
     div[data-baseweb="select"] span {
         color: var(--white) !important;
     }
 
-    div[data-baseweb="popover"] {
-        color: var(--white);
+    div[data-baseweb="input"]
+    input::placeholder {
+        color:
+            rgba(255, 255, 255, 0.46) !important;
     }
 
     ul[role="listbox"] {
-        background: #17141B !important;
+        background: #070708 !important;
         border:
-            1px solid rgba(255, 255, 255, 0.10);
+            1px solid
+            rgba(255, 255, 255, 0.13) !important;
     }
 
     li[role="option"] {
@@ -208,442 +445,182 @@ st.markdown(
 
     li[role="option"]:hover {
         background:
-            rgba(132, 19, 155, 0.28) !important;
+            rgba(132, 19, 155, 0.40) !important;
     }
 
-    /* Botones principales */
+    /* =========================
+       BOTONES GLASS
+       ========================= */
+
     .stButton > button {
-        width: 100%;
-        min-height: 56px;
+        width: 100% !important;
+        min-height: 56px !important;
         border:
-            1px solid rgba(255, 255, 255, 0.07) !important;
+            1px solid
+            rgba(255, 255, 255, 0.22) !important;
         border-radius: 15px !important;
         background:
             linear-gradient(
                 135deg,
-                var(--purple),
-                var(--fuchsia)
+                rgba(132, 19, 155, 0.96),
+                rgba(132, 19, 155, 0.68)
             ) !important;
         color: var(--white) !important;
-        font-size: 16px !important;
-        font-weight: 800 !important;
+        font-size: 15px !important;
+        font-weight: 900 !important;
         box-shadow:
-            0 16px 38px rgba(132, 19, 155, 0.34);
-        transition:
-            transform 0.2s ease,
-            box-shadow 0.2s ease,
-            filter 0.2s ease;
+            inset 0 1px 0
+            rgba(255, 255, 255, 0.20),
+            0 16px 38px
+            rgba(132, 19, 155, 0.34) !important;
+        backdrop-filter: blur(18px) !important;
+        transition: all 0.2s ease !important;
     }
 
     .stButton > button:hover {
-        transform: translateY(-2px);
+        transform:
+            translateY(-2px) !important;
+        border-color:
+            var(--yellow) !important;
+        background:
+            var(--yellow) !important;
+        color: #090900 !important;
         box-shadow:
-            0 20px 45px rgba(132, 19, 155, 0.48);
-        filter: brightness(1.08);
+            0 18px 42px
+            rgba(255, 204, 0, 0.20) !important;
     }
 
-    .stButton > button:active {
-        transform: translateY(0);
-    }
-
-    /* Botón descargar */
     .stDownloadButton > button {
-        width: 100%;
-        min-height: 52px;
+        width: 100% !important;
+        min-height: 54px !important;
         border:
-            1px solid var(--yellow) !important;
-        border-radius: 14px !important;
-        background: var(--yellow) !important;
-        color: #151100 !important;
-        font-size: 15px !important;
-        font-weight: 800 !important;
-        box-shadow:
-            0 12px 28px rgba(255, 204, 0, 0.20);
-        transition: all 0.2s ease;
-    }
-
-    .stDownloadButton > button:hover {
-        transform: translateY(-2px);
-        filter: brightness(1.04);
-        box-shadow:
-            0 16px 34px rgba(255, 204, 0, 0.28);
-    }
-
-    /* Pestañas */
-    div[data-baseweb="tab-list"] {
-        gap: 8px;
-        padding: 7px;
-        border-radius: 17px;
+            1px solid
+            var(--yellow) !important;
+        border-radius: 15px !important;
         background:
-            rgba(255, 255, 255, 0.045);
-        border:
-            1px solid rgba(255, 255, 255, 0.07);
-    }
-
-    button[data-baseweb="tab"] {
-        min-height: 50px;
-        border-radius: 12px;
-        padding: 11px 22px;
-        font-weight: 750;
-        color: #AAA4AF;
-        background: transparent;
-    }
-
-    button[data-baseweb="tab"]:hover {
-        color: var(--white);
-        background:
-            rgba(255, 255, 255, 0.04);
-    }
-
-    button[data-baseweb="tab"][aria-selected="true"] {
-        color: var(--yellow) !important;
-        background:
-            linear-gradient(
-                135deg,
-                rgba(132, 19, 155, 0.38),
-                rgba(205, 65, 198, 0.20)
-            );
+            rgba(255, 204, 0, 0.97) !important;
+        color: #090900 !important;
+        font-weight: 900 !important;
         box-shadow:
-            inset 0 0 0 1px
-            rgba(205, 65, 198, 0.22);
+            0 14px 34px
+            rgba(255, 204, 0, 0.18) !important;
     }
 
-    div[data-baseweb="tab-highlight"] {
-        display: none;
-    }
+    /* =========================
+       SUBIR ARCHIVO
+       ========================= */
 
-    /* Subir archivo */
     [data-testid="stFileUploaderDropzone"] {
-        min-height: 176px;
+        min-height: 180px !important;
         border:
             1.5px dashed
-            rgba(205, 65, 198, 0.45);
-        border-radius: 19px;
+            rgba(255, 204, 0, 0.52) !important;
+        border-radius: 20px !important;
         background:
-            linear-gradient(
-                145deg,
-                rgba(132, 19, 155, 0.10),
-                rgba(255, 255, 255, 0.025)
-            );
-        transition: all 0.2s ease;
+            radial-gradient(
+                circle at center,
+                rgba(132, 19, 155, 0.18),
+                transparent 66%
+            ),
+            rgba(0, 0, 0, 0.52) !important;
     }
 
-    [data-testid="stFileUploaderDropzone"]:hover {
-        border-color: var(--fuchsia);
-        background:
-            rgba(132, 19, 155, 0.16);
+    [data-testid="stFileUploaderDropzone"]
+    small,
+    [data-testid="stFileUploaderDropzone"]
+    span {
+        color: var(--white) !important;
     }
 
-    [data-testid="stFileUploaderDropzone"] small,
-    [data-testid="stFileUploaderDropzone"] span {
-        color: var(--muted) !important;
-    }
-
-    [data-testid="stFileUploaderDropzone"] button {
+    [data-testid="stFileUploaderDropzone"]
+    button {
         border:
-            1px solid rgba(255, 204, 0, 0.60) !important;
+            1px solid
+            rgba(255, 204, 0, 0.68) !important;
         border-radius: 12px !important;
         background:
             rgba(255, 204, 0, 0.08) !important;
         color: var(--yellow) !important;
-        font-weight: 750 !important;
+        font-weight: 800 !important;
     }
 
-    /* Archivo subido */
-    [data-testid="stFileUploaderFile"] {
-        background: #17151B;
-        border:
-            1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 13px;
-        color: var(--white);
-    }
+    /* =========================
+       TEXTO Y RESULTADOS
+       ========================= */
 
-    /* Áreas de texto */
     textarea {
-        border-radius: 17px !important;
         border:
             1px solid
-            rgba(255, 255, 255, 0.12) !important;
-        background: #111014 !important;
+            rgba(255, 255, 255, 0.15) !important;
+        border-radius: 18px !important;
+        background:
+            rgba(0, 0, 0, 0.62) !important;
         color: var(--white) !important;
-        line-height: 1.65 !important;
-        padding: 16px !important;
+        line-height: 1.7 !important;
+        padding: 17px !important;
     }
 
     textarea:focus {
-        border-color: var(--fuchsia) !important;
+        border-color:
+            var(--yellow) !important;
         box-shadow:
-            0 0 0 4px
-            rgba(205, 65, 198, 0.12) !important;
+            0 0 0 3px
+            rgba(255, 204, 0, 0.10) !important;
     }
 
-    /* Mensajes y alertas */
     [data-testid="stAlert"] {
-        border-radius: 15px;
+        border-radius: 15px !important;
         border:
-            1px solid rgba(255, 255, 255, 0.08);
+            1px solid
+            rgba(255, 255, 255, 0.12) !important;
     }
 
-    /* Spinner */
-    [data-testid="stSpinner"] {
-        color: var(--yellow);
+    .stMarkdown p,
+    [data-testid="stCaptionContainer"] {
+        color: var(--white) !important;
     }
 
-    /* Separadores */
     hr {
         border-color:
-            rgba(255, 255, 255, 0.09) !important;
+            rgba(255, 255, 255, 0.10) !important;
     }
 
-    /* Texto markdown */
-    .stMarkdown p {
-        color: var(--muted);
-    }
+    /* =========================
+       CELULAR
+       ========================= */
 
-    .stMarkdown strong {
-        color: var(--white);
-    }
-
-    /* Adaptación móvil */
     @media (max-width: 700px) {
 
         .block-container {
-            padding-left: 15px;
-            padding-right: 15px;
-            padding-top: 1rem;
+            padding-left: 14px;
+            padding-right: 14px;
+            padding-top: 0.75rem;
+        }
+
+        .pt-hero {
+            padding: 25px 20px 30px;
+            border-radius: 22px;
+        }
+
+        .pt-logo {
+            width: min(280px, 88%);
+        }
+
+        .pt-title {
+            font-size: 39px;
+            letter-spacing: -2px;
+        }
+
+        .pt-description {
+            font-size: 15px;
         }
 
         div[data-baseweb="tab-list"] {
-            flex-direction: column;
-        }
-
-        button[data-baseweb="tab"] {
-            width: 100%;
-        }
-
-        .saas-title {
-            font-size: 36px !important;
-            letter-spacing: -1.3px !important;
-        }
-
-        .saas-hero {
-            padding: 25px !important;
-            border-radius: 21px !important;
-        }
-
-        .hero-description {
-            font-size: 15px !important;
+            grid-template-columns:
+                1fr !important;
         }
     }
 
-/* ===== ENCABEZADO SAAS PREMIUM ===== */
-
-.app-shell {
-    margin-bottom: 24px;
-    padding: 26px 30px 34px;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 24px;
-    background:
-        radial-gradient(
-            circle at 90% 10%,
-            rgba(132,19,155,0.22),
-            transparent 26%
-        ),
-        linear-gradient(
-            145deg,
-            #151219 0%,
-            #0d0b10 100%
-        );
-    box-shadow:
-        0 28px 70px rgba(0,0,0,0.38);
-}
-
-.app-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 48px;
-}
-
-.brand-box {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.brand-logo {
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 13px;
-    background:
-        linear-gradient(
-            135deg,
-            #84139B,
-            #CD41C6
-        );
-    color: #ffffff;
-    font-size: 20px;
-    font-weight: 900;
-    box-shadow:
-        0 12px 28px rgba(132,19,155,0.32);
-}
-
-.brand-name {
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 800;
-}
-
-.brand-by {
-    margin-top: 2px;
-    color: #8f8995;
-    font-size: 11px;
-}
-
-.status-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 999px;
-    background: rgba(255,255,255,0.035);
-    color: #aaa3af;
-    font-size: 11px;
-    font-weight: 700;
-}
-
-.status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #28c879;
-    box-shadow:
-        0 0 12px rgba(40,200,121,0.65);
-}
-
-.hero-content {
-    max-width: 760px;
-}
-
-.hero-tag {
-    margin-bottom: 15px;
-    color: #FFCC00;
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 1.8px;
-}
-
-.hero-content h1 {
-    margin: 0;
-    max-width: 800px;
-    color: #ffffff !important;
-    font-size: clamp(38px, 6vw, 64px) !important;
-    line-height: 1.02 !important;
-    letter-spacing: -3px !important;
-    font-weight: 850 !important;
-}
-
-.hero-content h1 span {
-    color: #FFCC00;
-}
-
-.hero-content p {
-    max-width: 650px;
-    margin: 18px 0 0;
-    color: #aaa3af;
-    font-size: 16px;
-    line-height: 1.65;
-}
-
-/* ===== PESTAÑAS MÁS LEGIBLES ===== */
-
-div[data-baseweb="tab-list"] {
-    margin-top: 8px;
-    padding: 5px;
-    border-radius: 14px;
-    background: #111015;
-    border: 1px solid rgba(255,255,255,0.08);
-}
-
-button[data-baseweb="tab"] {
-    min-height: 46px;
-    padding: 10px 20px;
-    color: #a9a3ae !important;
-    font-size: 13px;
-    font-weight: 750;
-}
-
-button[data-baseweb="tab"][aria-selected="true"] {
-    color: #ffffff !important;
-    background:
-        linear-gradient(
-            135deg,
-            #84139B,
-            #a92ab1
-        ) !important;
-    box-shadow:
-        0 8px 22px rgba(132,19,155,0.30);
-}
-
-/* ===== CAMPO URL OSCURO ===== */
-
-div[data-baseweb="input"] > div {
-    background: #111015 !important;
-    border: 1px solid rgba(255,255,255,0.10) !important;
-}
-
-div[data-baseweb="input"] input {
-    color: #ffffff !important;
-}
-
-div[data-baseweb="input"] input::placeholder {
-    color: #6e6873 !important;
-}
-
-/* ===== BOTÓN MÁS PROFESIONAL ===== */
-
-.stButton > button {
-    width: auto !important;
-    min-width: 210px;
-    padding-left: 24px !important;
-    padding-right: 24px !important;
-    background:
-        linear-gradient(
-            135deg,
-            #84139B,
-            #CD41C6
-        ) !important;
-    border-radius: 13px !important;
-}
-
-/* MÓVIL */
-
-@media (max-width: 700px) {
-    .app-shell {
-        padding: 20px;
-    }
-
-    .app-topbar {
-        margin-bottom: 34px;
-    }
-
-    .status-box {
-        display: none;
-    }
-
-    .hero-content h1 {
-        font-size: 40px !important;
-        letter-spacing: -2px !important;
-    }
-
-    .stButton > button {
-        width: 100% !important;
-    }
-}
     </style>
     """,
     unsafe_allow_html=True,
@@ -651,33 +628,59 @@ div[data-baseweb="input"] input::placeholder {
 
 
 # =========================================================
-# ENCABEZADO SAAS OSCURO
+# ENCABEZADO VISUAL
 # =========================================================
 
-st.markdown(
-    '<div class="app-shell">'
-    '<div class="app-topbar">'
-    '<div class="brand-box">'
-    '<div class="brand-logo">P</div>'
-    '<div>'
-    '<div class="brand-name">ProTranscribe AI</div>'
-    '<div class="brand-by">by Impulza Digital</div>'
-    '</div>'
-    '</div>'
-    '<div class="status-box">'
-    '<span class="status-dot"></span>'
-    'Sistema listo'
-    '</div>'
-    '</div>'
-    '<div class="hero-content">'
-    '<div class="hero-tag">TRANSCRIPCIÓN CON INTELIGENCIA ARTIFICIAL</div>'
-    '<h1>Convierte videos y audios <span>en texto</span></h1>'
-    '<p>Pega una URL o sube un archivo para transcribir el contenido y traducirlo al idioma que necesites.</p>'
-    '</div>'
-    '</div>',
-    unsafe_allow_html=True
-)
+if logo_base64:
+    logo_html = (
+        f'<img class="pt-logo" '
+        f'src="data:image/png;base64,{logo_base64}" '
+        f'alt="Impulza Digital">'
+    )
+else:
+    logo_html = (
+        '<div style="'
+        'font-size:22px;'
+        'font-weight:900;'
+        'color:#FFFFFF;'
+        '">'
+        'IMPULZA DIGITAL'
+        '</div>'
+    )
 
+
+st.markdown(
+    '<section class="pt-hero">'
+    f'<div class="pt-logo-wrap">'
+    f'{logo_html}'
+    f'</div>'
+    '<div class="pt-kicker">'
+    'TRANSCRIPCIÓN CON INTELIGENCIA ARTIFICIAL'
+    '</div>'
+    '<div class="pt-title">'
+    'ProTranscribe <strong>AI</strong>'
+    '</div>'
+    '<div class="pt-description">'
+    'Convierte videos y audios en texto desde una URL '
+    'o subiendo un archivo. Después traduce el resultado '
+    'al idioma que necesites.'
+    '</div>'
+    '<div class="pt-wave">'
+    '<span></span>'
+    '<span></span>'
+    '<span></span>'
+    '<span></span>'
+    '<span></span>'
+    '<span></span>'
+    '<span></span>'
+    '<span></span>'
+    '<span></span>'
+    '<span></span>'
+    '<span></span>'
+    '</div>'
+    '</section>',
+    unsafe_allow_html=True,
+)
 # =========================================================
 # ESTADO ORIGINAL
 # =========================================================
@@ -720,12 +723,10 @@ def traducir_texto_largo(texto, destino):
 
 tab1, tab2 = st.tabs(
     [
-        "🔗 Pegar URL",
-        "📁 Subir video o audio",
+        "Pegar URL",
+        "Subir video o audio",
     ]
 )
-
-
 # =========================================================
 # PESTAÑA 1: URL
 # =========================================================
@@ -733,9 +734,7 @@ tab1, tab2 = st.tabs(
 with tab1:
     url = st.text_input(
         "URL del video:",
-        placeholder=(
-            "Pega aquí el enlace del video"
-        ),
+        placeholder="Pega aquí el enlace del video",
     )
 
     if st.button(
@@ -762,10 +761,34 @@ with tab1:
                         except OSError:
                             pass
 
+                    http_headers = {
+                        "User-Agent": (
+                            "Mozilla/5.0 "
+                            "(Windows NT 10.0; Win64; x64) "
+                            "AppleWebKit/537.36 "
+                            "(KHTML, like Gecko) "
+                            "Chrome/126.0.0.0 "
+                            "Safari/537.36"
+                        ),
+                        "Accept-Language": (
+                            "es-ES,es;q=0.9,en;q=0.8"
+                        ),
+                    }
+
+                    if (
+                        "facebook.com" in url.lower()
+                        or "fb.watch" in url.lower()
+                    ):
+                        http_headers["Referer"] = (
+                            "https://www.facebook.com/"
+                        )
+
                     ydl_opts = {
                         "format": "bestaudio/best",
                         "outtmpl": "/tmp/audio_final",
                         "quiet": True,
+                        "noplaylist": True,
+                        "http_headers": http_headers,
                     }
 
                     with yt_dlp.YoutubeDL(
@@ -800,17 +823,14 @@ with tab1:
 
                     else:
                         st.error(
-                            "No se encontró el archivo "
-                            "descargado."
+                            "No se encontró el archivo descargado."
                         )
 
                 except Exception as error:
                     st.error(
                         f"Error: {error}"
                     )
-
-
-# =========================================================
+                    # =========================================================
 # PESTAÑA 2: SUBIR ARCHIVO
 # =========================================================
 
@@ -880,26 +900,27 @@ if st.session_state.texto_transcrito:
     st.markdown(
         """
         <div style="
-            margin-top: 30px;
-            padding: 20px 0 8px;
+            margin-top: 32px;
+            padding: 22px 0 10px;
             border-top:
                 1px solid
-                rgba(255,255,255,0.08);
+                rgba(255,255,255,0.10);
+            text-align: center;
         ">
             <div style="
                 color: #FFCC00;
-                font-size: 12px;
-                font-weight: 800;
-                letter-spacing: 1.6px;
-                margin-bottom: 6px;
+                font-size: 11px;
+                font-weight: 900;
+                letter-spacing: 1.8px;
+                margin-bottom: 7px;
             ">
                 RESULTADO
             </div>
 
             <div style="
                 color: #FFFFFF;
-                font-size: 27px;
-                font-weight: 800;
+                font-size: 28px;
+                font-weight: 900;
                 letter-spacing: -0.8px;
             ">
                 Tu transcripción está lista
@@ -1002,16 +1023,19 @@ st.markdown(
     """
     <div style="
         text-align: center;
-        margin-top: 44px;
+        margin-top: 46px;
         padding-top: 24px;
         border-top:
-            1px solid rgba(255,255,255,0.08);
-        color: #77717E;
+            1px solid
+            rgba(255,255,255,0.10);
+        color: #FFFFFF;
         font-size: 12px;
+        opacity: 0.72;
     ">
         Powered by
         <strong style="
             color: #FFCC00;
+            opacity: 1;
         ">
             Impulza Digital
         </strong>
