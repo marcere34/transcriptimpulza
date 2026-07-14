@@ -632,6 +632,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+
 # =========================================================
 # ENCABEZADO VISUAL
 # =========================================================
@@ -676,7 +677,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-logo_base64 = cargar_logo_base64()
 
 # =========================================================
 # ESTADO ORIGINAL
