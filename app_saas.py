@@ -628,6 +628,15 @@ button[data-baseweb="tab"][aria-selected="true"] * {
         }
     }
 
+button[data-baseweb="tab"] p {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
+}
+
+button[data-baseweb="tab"][aria-selected="true"] p {
+    color: #090900 !important;
+}
+
     </style>
     """,
     unsafe_allow_html=True,
