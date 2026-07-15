@@ -1,0 +1,22 @@
+{
+  "name": "ProTranscribe AI",
+  "short_name": "ProTranscribe",
+  "description": "Transcribe videos y audios con inteligencia artificial.",
+  "start_url": "https://impulzadigital.net/protranscribe-ai/",
+  "scope": "https://impulzadigital.net/protranscribe-ai/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#84139B",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/marcere34/transcriptimpulza/main/protranscribe-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/marcere34/transcriptimpulza/main/protranscribe-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
