@@ -1032,25 +1032,21 @@ if st.session_state.texto_transcrito:
                     )
 
   if st.session_state.texto_traducido:
-        texto_traducido_editado = st.text_area(
-            "Texto traducido:",
-            value=(
-                st.session_state.texto_traducido
-            ),
-            height=280,
-        )
+      texto_traducido_editado = st.text_area(
+          "Texto traducido:",
+          value=st.session_state.texto_traducido,
+          height=280,
+      )
 
-  st.session_state.texto_traducido = (
-            texto_traducido_editado
-        )
+      st.session_state.texto_traducido = texto_traducido_editado
 
-  st.download_button(
-            label="Descargar traducción TXT",
-            data=texto_traducido_editado,
-            file_name="traduccion.txt",
-            mime="text/plain",
-            use_container_width=True,
-        )
+      st.download_button(
+          label="Descargar traducción TXT",
+          data=st.session_state.texto_traducido,
+          file_name="traduccion.txt",
+          mime="text/plain",
+          use_container_width=True,
+      )
 
 
 # =========================================================
